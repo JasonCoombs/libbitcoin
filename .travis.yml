@@ -49,7 +49,7 @@ install:
 script:
 
     # Download and build libbitcoin and all dependencies.
-    - if [[ $OSX   && $CLANG && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh --build-boost --disable-shared --prefix=$TRAVIS_BUILD_DIR/my-prefix; fi
-    - if [[ $OSX   && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh --build-boost --disable-static --prefix=$TRAVIS_BUILD_DIR/my-prefix; fi
+    - if [[ $OSX   && $CLANG && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh CFLAGS="-Og -g" --build-boost --disable-shared --prefix=$TRAVIS_BUILD_DIR/my-prefix; fi
+    - if [[ $OSX   && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh CFLAGS="-Og -g" --build-boost --disable-static --prefix=$TRAVIS_BUILD_DIR/my-prefix; fi
 
 after_success:
