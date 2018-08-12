@@ -20,9 +20,9 @@ matrix:
         - os: osx
           compiler: clang
           env: LINK=dynamic
-        - os: osx
-          compiler: clang
-          env: LINK=static
+#        - os: osx
+ #         compiler: clang
+  #        env: LINK=static
     fast_finish:
         - true
 
@@ -50,6 +50,6 @@ script:
 
     # Download and build libbitcoin and all dependencies.
     - if [[ $OSX   && $CLANG && $STATIC  ]]; then CC=$CC CXX=$CXX ./install.sh CFLAGS="-Og -g" --build-boost --disable-shared --prefix=$TRAVIS_BUILD_DIR/my-prefix; fi
-    - if [[ $OSX   && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh CFLAGS="-Og -g" --build-boost --disable-static --prefix=$TRAVIS_BUILD_DIR/my-prefix; fi
+    - if [[ $OSX   && $CLANG && $DYNAMIC ]]; then CC=$CC CXX=$CXX ./install.sh CFLAGS="-Og -g" --disable-static --prefix=$TRAVIS_BUILD_DIR/my-prefix; fi
 
 after_success:
