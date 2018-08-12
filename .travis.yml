@@ -17,12 +17,12 @@ addons:
 
 matrix:
     include:
+  #      - os: osx
+ #         compiler: clang
+#          env: LINK=dynamic
         - os: osx
           compiler: clang
-          env: LINK=dynamic
-#        - os: osx
- #         compiler: clang
-  #        env: LINK=static
+          env: LINK=static
     fast_finish:
         - true
 
