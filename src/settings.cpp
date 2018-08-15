@@ -41,7 +41,10 @@ settings::settings()
     bip65_version(4),
     bip9_version_bit0(1u << 0),
     bip9_version_bit1(1u << 1),
-    bip9_version_base(0x20000000)
+    bip9_version_base(0x20000000),
+    satoshi_per_bitcoin(100000000),
+    initial_block_subsidy_bitcoin(50),
+    recursive_money(9999999989u)
 {
 }
 
@@ -52,7 +55,7 @@ settings::settings(config::settings context)
     {
         case config::settings::mainnet:
         {
-            genesis_block.from_data({
+            genesis_block = chain::block::factory({
                 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -88,7 +91,7 @@ settings::settings(config::settings context)
                 0xf3, 0x55, 0x04, 0xe5, 0x1e, 0xc1, 0x12, 0xde,
                 0x5c, 0x38, 0x4d, 0xf7, 0xba, 0x0b, 0x8d, 0x57,
                 0x8a, 0x4c, 0x70, 0x2b, 0x6b, 0xf1, 0x1d, 0x5f,
-                0xac, 0x00, 0x00, 0x00, 0x00});
+                0xac, 0x00, 0x00, 0x00, 0x00}, *this);
             net_active = 750;
             net_enforce = 950;
             net_sample = 1000;
@@ -106,12 +109,13 @@ settings::settings(config::settings context)
                 "0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893",
                 481824);
 
+            subsidy_interval = 210000;
             break;
         }
 
         case config::settings::testnet:
         {
-            genesis_block.from_data({
+            genesis_block = chain::block::factory({
                 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -147,7 +151,7 @@ settings::settings(config::settings context)
                 0xf3, 0x55, 0x04, 0xe5, 0x1e, 0xc1, 0x12, 0xde,
                 0x5c, 0x38, 0x4d, 0xf7, 0xba, 0x0b, 0x8d, 0x57,
                 0x8a, 0x4c, 0x70, 0x2b, 0x6b, 0xf1, 0x1d, 0x5f,
-                0xac, 0x00, 0x00, 0x00, 0x00});
+                0xac, 0x00, 0x00, 0x00, 0x00}, *this);
             net_active = 51;
             net_enforce = 75;
             net_sample = 100;
@@ -165,12 +169,13 @@ settings::settings(config::settings context)
                 "00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca",
                 834624);
 
+            subsidy_interval = 210000;
             break;
         }
 
         case config::settings::regtest:
         {
-            genesis_block.from_data({
+            genesis_block = chain::block::factory({
                 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
                 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -206,13 +211,13 @@ settings::settings(config::settings context)
                 0xf3, 0x55, 0x04, 0xe5, 0x1e, 0xc1, 0x12, 0xde,
                 0x5c, 0x38, 0x4d, 0xf7, 0xba, 0x0b, 0x8d, 0x57,
                 0x8a, 0x4c, 0x70, 0x2b, 0x6b, 0xf1, 0x1d, 0x5f,
-                0xac, 0x00, 0x00, 0x00, 0x00});
+                0xac, 0x00, 0x00, 0x00, 0x00}, *this);
             bip65_freeze = 1351;
             bip66_freeze = 1251;
             bip34_freeze = 0;
             bip16_activation_time = 0x4f3af580;
-            const config::checkpoint genesis_checkpoint(genesis_block.hash(),
-                0);
+            const config::checkpoint genesis_checkpoint(
+                static_cast<chain::block>(genesis_block).hash(), 0);
 
             // Since bip90 assumes a historical bip34 activation block,
             // use genesis.
@@ -223,6 +228,7 @@ settings::settings(config::settings context)
             bip9_bit0_active_checkpoint = genesis_checkpoint;
             bip9_bit1_active_checkpoint = genesis_checkpoint;
 
+            subsidy_interval = 150;
             break;
         }
 
@@ -231,6 +237,21 @@ settings::settings(config::settings context)
         {
         }
     }
+
+    //**************************************************************************
+    // CONSENSUS: This is the true maximum amount of money that can be created.
+    // The satoshi client uses a "sanity check" value that is effectively based
+    // on a round but incorrect value of recursive_money, which is higher than
+    // this true value. Despite comments to the contrary in the satoshi code, no
+    // value could be consensus critical unless it was *less* than the true
+    // value.
+    //**************************************************************************
+    max_money = recursive_money * subsidy_interval;
+}
+
+uint64_t settings::bitcoin_to_satoshi(uint64_t bitcoin_units) const
+{
+    return bitcoin_units * satoshi_per_bitcoin;
 }
 
 } // namespace libbitcoin

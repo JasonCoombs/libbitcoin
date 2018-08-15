@@ -23,6 +23,11 @@ using namespace bc;
 
 BOOST_AUTO_TEST_SUITE(settings_tests)
 
+uint64_t max_money_recursive(uint64_t money)
+{
+    return money > 0 ? money + max_money_recursive(money >> 1) : 0;
+}
+
 // constructors
 //-----------------------------------------------------------------------------
 
@@ -46,6 +51,15 @@ BOOST_AUTO_TEST_CASE(settings__construct__default_context__expected)
     BOOST_REQUIRE_EQUAL(configuration.bip9_version_bit0, 1u);
     BOOST_REQUIRE_EQUAL(configuration.bip9_version_bit1, 2u);
     BOOST_REQUIRE_EQUAL(configuration.bip9_version_base, 0x20000000);
+    BOOST_REQUIRE_EQUAL(configuration.satoshi_per_bitcoin, 100000000);
+    BOOST_REQUIRE_EQUAL(configuration.initial_block_subsidy_bitcoin, 50);
+    BOOST_REQUIRE_EQUAL(configuration.recursive_money, 9999999989u);
+    auto coin_subsidy = configuration.initial_block_subsidy_bitcoin;
+    coin_subsidy = configuration.bitcoin_to_satoshi(coin_subsidy);
+    const auto recursive_money = max_money_recursive(coin_subsidy);
+    BOOST_REQUIRE_EQUAL(recursive_money, configuration.recursive_money);
+    const auto satoshi_per_bitcoin = configuration.bitcoin_to_satoshi(1);
+    BOOST_REQUIRE_EQUAL(satoshi_per_bitcoin, configuration.satoshi_per_bitcoin);
 }
 
 BOOST_AUTO_TEST_CASE(settings__construct__mainnet_context__expected)
@@ -61,7 +75,8 @@ BOOST_AUTO_TEST_CASE(settings__construct__mainnet_context__expected)
     BOOST_REQUIRE_EQUAL(configuration.min_timespan, 302400);
     BOOST_REQUIRE_EQUAL(configuration.max_timespan, 4838400);
     BOOST_REQUIRE_EQUAL(configuration.retargeting_interval, 2016);
-    BOOST_REQUIRE_EQUAL(configuration.genesis_block.to_data(), data_chunk({
+    const chain::block genesis_block = configuration.genesis_block;
+    BOOST_REQUIRE_EQUAL(genesis_block.to_data(), data_chunk({
         0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -124,6 +139,17 @@ BOOST_AUTO_TEST_CASE(settings__construct__mainnet_context__expected)
         "0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893",
         481824);
     BOOST_REQUIRE_EQUAL(configuration.bip9_bit1_active_checkpoint, bit1_active);
+    BOOST_REQUIRE_EQUAL(configuration.satoshi_per_bitcoin, 100000000);
+    BOOST_REQUIRE_EQUAL(configuration.initial_block_subsidy_bitcoin, 50);
+    BOOST_REQUIRE_EQUAL(configuration.recursive_money, 9999999989u);
+    BOOST_REQUIRE_EQUAL(configuration.subsidy_interval, 210000);
+    auto coin_subsidy = configuration.initial_block_subsidy_bitcoin;
+    coin_subsidy = configuration.bitcoin_to_satoshi(coin_subsidy);
+    const auto recursive_money = max_money_recursive(coin_subsidy);
+    BOOST_REQUIRE_EQUAL(recursive_money, configuration.recursive_money);
+    const auto satoshi_per_bitcoin = configuration.bitcoin_to_satoshi(1);
+    BOOST_REQUIRE_EQUAL(satoshi_per_bitcoin, configuration.satoshi_per_bitcoin);
+    BOOST_REQUIRE_EQUAL(configuration.max_money, 2099999997690000);
 }
 
 BOOST_AUTO_TEST_CASE(settings__construct__testnet_context__expected)
@@ -139,7 +165,8 @@ BOOST_AUTO_TEST_CASE(settings__construct__testnet_context__expected)
     BOOST_REQUIRE_EQUAL(configuration.min_timespan, 302400);
     BOOST_REQUIRE_EQUAL(configuration.max_timespan, 4838400);
     BOOST_REQUIRE_EQUAL(configuration.retargeting_interval, 2016);
-    BOOST_REQUIRE_EQUAL(configuration.genesis_block.to_data(), data_chunk({
+    const chain::block genesis_block = configuration.genesis_block;
+    BOOST_REQUIRE_EQUAL(genesis_block.to_data(), data_chunk({
         0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -202,6 +229,17 @@ BOOST_AUTO_TEST_CASE(settings__construct__testnet_context__expected)
         "00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca",
         834624);
     BOOST_REQUIRE_EQUAL(configuration.bip9_bit1_active_checkpoint, bit1_active);
+    BOOST_REQUIRE_EQUAL(configuration.satoshi_per_bitcoin, 100000000);
+    BOOST_REQUIRE_EQUAL(configuration.initial_block_subsidy_bitcoin, 50);
+    BOOST_REQUIRE_EQUAL(configuration.recursive_money, 9999999989u);
+    BOOST_REQUIRE_EQUAL(configuration.subsidy_interval, 210000);
+    auto coin_subsidy = configuration.initial_block_subsidy_bitcoin;
+    coin_subsidy = configuration.bitcoin_to_satoshi(coin_subsidy);
+    const auto recursive_money = max_money_recursive(coin_subsidy);
+    BOOST_REQUIRE_EQUAL(recursive_money, configuration.recursive_money);
+    const auto satoshi_per_bitcoin = configuration.bitcoin_to_satoshi(1);
+    BOOST_REQUIRE_EQUAL(satoshi_per_bitcoin, configuration.satoshi_per_bitcoin);
+    BOOST_REQUIRE_EQUAL(configuration.max_money, 2099999997690000);
 }
 
 BOOST_AUTO_TEST_CASE(settings__construct__regtest_context__expected)
@@ -217,7 +255,8 @@ BOOST_AUTO_TEST_CASE(settings__construct__regtest_context__expected)
     BOOST_REQUIRE_EQUAL(configuration.min_timespan, 302400);
     BOOST_REQUIRE_EQUAL(configuration.max_timespan, 4838400);
     BOOST_REQUIRE_EQUAL(configuration.retargeting_interval, 2016);
-    BOOST_REQUIRE_EQUAL(configuration.genesis_block.to_data(), data_chunk({
+    const chain::block genesis_block = configuration.genesis_block;
+    BOOST_REQUIRE_EQUAL(genesis_block.to_data(), data_chunk({
         0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -265,10 +304,21 @@ BOOST_AUTO_TEST_CASE(settings__construct__regtest_context__expected)
     BOOST_REQUIRE_EQUAL(configuration.bip66_freeze, 1251);
     BOOST_REQUIRE_EQUAL(configuration.bip34_freeze, 0);
     BOOST_REQUIRE_EQUAL(configuration.bip16_activation_time, 0x4f3af580);
-    const config::checkpoint genesis(configuration.genesis_block.hash(), 0);
+    const config::checkpoint genesis(genesis_block.hash(), 0);
     BOOST_REQUIRE_EQUAL(configuration.bip34_active_checkpoint, genesis);
     BOOST_REQUIRE_EQUAL(configuration.bip9_bit0_active_checkpoint, genesis);
     BOOST_REQUIRE_EQUAL(configuration.bip9_bit1_active_checkpoint, genesis);
+    BOOST_REQUIRE_EQUAL(configuration.satoshi_per_bitcoin, 100000000);
+    BOOST_REQUIRE_EQUAL(configuration.initial_block_subsidy_bitcoin, 50);
+    BOOST_REQUIRE_EQUAL(configuration.recursive_money, 9999999989u);
+    BOOST_REQUIRE_EQUAL(configuration.subsidy_interval, 150);
+    auto coin_subsidy = configuration.initial_block_subsidy_bitcoin;
+    coin_subsidy = configuration.bitcoin_to_satoshi(coin_subsidy);
+    const auto recursive_money = max_money_recursive(coin_subsidy);
+    BOOST_REQUIRE_EQUAL(recursive_money, configuration.recursive_money);
+    const auto satoshi_per_bitcoin = configuration.bitcoin_to_satoshi(1);
+    BOOST_REQUIRE_EQUAL(satoshi_per_bitcoin, configuration.satoshi_per_bitcoin);
+    BOOST_REQUIRE_EQUAL(configuration.max_money, 1499999998350);
 }
 
 BOOST_AUTO_TEST_SUITE_END()
