@@ -133,8 +133,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
     
     // Critical Section (prevent concurrent handler execution)
     ///////////////////////////////////////////////////////////////////////////
-    unique_lock lockm(invoke_mutex_);
-    std::unique_lock<std::mutex> lockm(invoke_mutex_, std::defer_lock);
+    invoke_mutex_.lock();
     // Critical Section (protect stop)
     ///////////////////////////////////////////////////////////////////////////
     subscribe_mutex_.lock();
@@ -175,9 +174,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
         }
     }
 
-    lockm.unlock();
-
-    }
+    invoke_mutex_.unlock();
     ///////////////////////////////////////////////////////////////////////////
 }
 
