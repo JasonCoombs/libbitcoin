@@ -129,12 +129,53 @@ void resubscriber<Args...>::relay(Args... args)
 template <typename... Args>
 void resubscriber<Args...>::do_invoke(Args... args)
 {
-    list *subscriptions = new list; // allocate from heap; a stack vector type may confuse compilers
+    list subscriptions;
+    
+    // Critical Section (prevent concurrent handler execution)
+    ///////////////////////////////////////////////////////////////////////////
+    unique_lock lockm(invoke_mutex_);
+    std::unique_lock<std::mutex> lockm(invoke_mutex_, std::defer_lock);
+    // Critical Section (protect stop)
+    ///////////////////////////////////////////////////////////////////////////
+    subscribe_mutex_.lock();
 
-    if(subscriptions)
+    // Move subscribers from the member list to a temporary list.
+    swap(subscriptions, subscriptions_); // intend for this to call swap(vector& x);
+
+    subscribe_mutex_.unlock();
+    ///////////////////////////////////////////////////////////////////////////
+
+    // Subscriptions may be created while this loop is executing.
+    // Invoke subscribers from temporary list and resubscribe as indicated.
+    for (const auto& handlers: subscriptions)
     {
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        // DEADLOCK RISK, handler must not return to invoke.
+        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        bool handled = (handler)handlers(args...);
+        if (handled)
+        {
+            // Critical Section
+            ///////////////////////////////////////////////////////////////////
+            subscribe_mutex_.lock_upgrade();
 
-    delete subscriptions;
+            if (stopped_)
+            {
+                subscribe_mutex_.unlock_upgrade();
+                //-------------------------------------------------------------
+                continue;
+            }
+
+            subscribe_mutex_.unlock_upgrade_and_lock();
+            //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+            subscriptions_.push_back(handlers);
+
+            subscribe_mutex_.unlock();
+            ///////////////////////////////////////////////////////////////////
+        }
+    }
+
+    lockm.unlock();
 
     }
     ///////////////////////////////////////////////////////////////////////////
