@@ -134,49 +134,6 @@ void resubscriber<Args...>::do_invoke(Args... args)
     if(subscriptions)
     {
 
-    // Critical Section (prevent concurrent handler execution)
-    ///////////////////////////////////////////////////////////////////////////
-    unique_lock lock(invoke_mutex_);
-
-    // Critical Section (protect stop)
-    ///////////////////////////////////////////////////////////////////////////
-    subscribe_mutex_.lock();
-
-    // Move subscribers from the member list to a temporary list.
-    swap(*subscriptions, subscriptions_); // intend for this to call swap(vector& x);
-
-    subscribe_mutex_.unlock();
-    ///////////////////////////////////////////////////////////////////////////
-
-    // Subscriptions may be created while this loop is executing.
-    // Invoke subscribers from temporary list and resubscribe as indicated.
-    for (const auto& handlers: subscriptions)
-    {
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // DEADLOCK RISK, handler must not return to invoke.
-        //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        if ((handler)handlers(args...))
-        {
-            // Critical Section
-            ///////////////////////////////////////////////////////////////////
-            subscribe_mutex_.lock_upgrade();
-
-            if (stopped_)
-            {
-                subscribe_mutex_.unlock_upgrade();
-                //-------------------------------------------------------------
-                continue;
-            }
-
-            subscribe_mutex_.unlock_upgrade_and_lock();
-            //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            subscriptions_.push_back(handlers);
-
-            subscribe_mutex_.unlock();
-            ///////////////////////////////////////////////////////////////////
-        }
-    }
-
     delete subscriptions;
 
     }
