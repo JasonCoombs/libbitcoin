@@ -143,7 +143,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
     subscribe_mutex_.lock();
 
     // Move subscribers from the member list to a temporary list.
-    vector::swap(*subscriptions, subscriptions_);
+    swap(*subscriptions, subscriptions_); // intend for this to call swap(vector& x);
 
     subscribe_mutex_.unlock();
     ///////////////////////////////////////////////////////////////////////////
