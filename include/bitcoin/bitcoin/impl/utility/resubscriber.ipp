@@ -23,6 +23,7 @@
 #include <memory>
 #include <string>
 #include <utility>
+#include <vector>
 #include <bitcoin/bitcoin/utility/assert.hpp>
 #include <bitcoin/bitcoin/utility/dispatcher.hpp>
 #include <bitcoin/bitcoin/utility/thread.hpp>
@@ -169,7 +170,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
 
             subscribe_mutex_.unlock_upgrade_and_lock();
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            subscriptions_.push_back(handler);
+            subscriptions_.push_back(handlers);
 
             subscribe_mutex_.unlock();
             ///////////////////////////////////////////////////////////////////
