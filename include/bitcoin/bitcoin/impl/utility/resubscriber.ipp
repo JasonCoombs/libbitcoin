@@ -168,7 +168,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
 
             subscribe_mutex_.unlock_upgrade_and_lock();
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            subscriptions_.push_back(handlers);
+            subscriptions_.push_back(*handlers);
 
             subscribe_mutex_.unlock();
             ///////////////////////////////////////////////////////////////////
