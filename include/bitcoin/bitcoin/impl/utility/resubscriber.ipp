@@ -146,13 +146,13 @@ void resubscriber<Args...>::do_invoke(Args... args)
 
     // Subscriptions may be created while this loop is executing.
     // Invoke subscribers from temporary list and resubscribe as indicated.
-    for (const auto& handlers: subscriptions)
+    for (const auto handlers = subscriptions.cbegin(); handlers != subscriptions.end(); handlers++)
     {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // DEADLOCK RISK, handler must not return to invoke.
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         bool handled = false;
-        handled = ((handler)handlers)(args...);
+        handled = ((handler)*handlers)(args...);
         if (handled)
         {
             // Critical Section
