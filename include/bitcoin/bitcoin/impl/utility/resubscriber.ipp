@@ -129,12 +129,9 @@ void resubscriber<Args...>::relay(Args... args)
 template <typename... Args>
 void resubscriber<Args...>::do_invoke(Args... args)
 {
-    list subscriptions;
-    
     // Critical Section (prevent concurrent handler execution)
     ///////////////////////////////////////////////////////////////////////////
-    unique_lock locku(invoke_mutex_);
-    locku.lock();
+    invoke_mutex_.lock();
 
     // Critical Section (protect stop)
     ///////////////////////////////////////////////////////////////////////////
@@ -175,8 +172,9 @@ void resubscriber<Args...>::do_invoke(Args... args)
             ///////////////////////////////////////////////////////////////////
         }
     }
+    
+    invoke_mutex_.unlock();
 
-    locku.~unique_lock(); // let the destructor unlock mutex
     ///////////////////////////////////////////////////////////////////////////
 }
 
