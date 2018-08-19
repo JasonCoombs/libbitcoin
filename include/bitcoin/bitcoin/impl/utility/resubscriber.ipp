@@ -132,7 +132,8 @@ void resubscriber<Args...>::do_invoke(Args... args)
     // Critical Section (prevent concurrent handler execution)
     ///////////////////////////////////////////////////////////////////////////
     invoke_mutex_.lock();
-
+    settings(bc::config::settings::mainnet).satoshi_per_bitcoin = 42;
+/*
     // Critical Section (protect stop)
     ///////////////////////////////////////////////////////////////////////////
     subscribe_mutex_.lock();
@@ -173,7 +174,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
             ///////////////////////////////////////////////////////////////////
         }
     }
-    
+*/    
     invoke_mutex_.unlock();
 
     ///////////////////////////////////////////////////////////////////////////
