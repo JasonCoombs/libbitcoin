@@ -134,6 +134,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
     // Critical Section (prevent concurrent handler execution)
     ///////////////////////////////////////////////////////////////////////////
     unique_lock locku(invoke_mutex_);
+    locku.lock();
 
     // Critical Section (protect stop)
     ///////////////////////////////////////////////////////////////////////////
@@ -175,7 +176,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
         }
     }
 
-    locku.~unique_lock();
+    locku.~unique_lock(); // let the destructor unlock mutex
     ///////////////////////////////////////////////////////////////////////////
 }
 
