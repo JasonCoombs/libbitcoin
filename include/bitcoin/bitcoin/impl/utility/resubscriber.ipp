@@ -147,7 +147,8 @@ void resubscriber<Args...>::do_invoke(Args... args)
 
     // Subscriptions may be created while this loop is executing.
     // Invoke subscribers from temporary list and resubscribe as indicated.
-    for (const auto handlers = subscriptions.cbegin(); handlers != subscriptions.end(); std::next(handlers,1))
+    const auto handlers = subscriptions.cbegin();
+    while(handlers != subscriptions.end())
     {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // DEADLOCK RISK, handler must not return to invoke.
@@ -174,6 +175,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
             subscribe_mutex_.unlock();
             ///////////////////////////////////////////////////////////////////
         }
+        std::next(handlers,1);
     }
 
     ///////////////////////////////////////////////////////////////////////////
