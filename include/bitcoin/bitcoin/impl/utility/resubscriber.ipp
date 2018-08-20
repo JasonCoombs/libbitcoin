@@ -153,7 +153,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
         // DEADLOCK RISK, handler must not return to invoke.
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         bool handled = false;
-        handled = (*(handler)*handlers)(args...);
+        handled = ((handler)*handlers)(args...);
         if (handled)
         {
             // Critical Section
