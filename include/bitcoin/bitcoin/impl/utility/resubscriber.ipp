@@ -153,7 +153,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
         // DEADLOCK RISK, handler must not return to invoke.
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         bool handled = false;
-        handled = (*(handler *)*handlers)(args...);
+        handled = (*(handler)*handlers)(args...);
         if (handled)
         {
             // Critical Section
@@ -169,7 +169,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
 
             subscribe_mutex_.unlock_upgrade_and_lock();
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            subscriptions_.push_back(*(handler *)*handlers);
+            subscriptions_.push_back((handler)*handlers);
 
             subscribe_mutex_.unlock();
             ///////////////////////////////////////////////////////////////////
