@@ -24,6 +24,7 @@
 #include <string>
 #include <utility>
 #include <vector>
+#include <iterator>
 #include <bitcoin/bitcoin/utility/assert.hpp>
 #include <bitcoin/bitcoin/utility/dispatcher.hpp>
 #include <bitcoin/bitcoin/utility/thread.hpp>
@@ -146,7 +147,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
 
     // Subscriptions may be created while this loop is executing.
     // Invoke subscribers from temporary list and resubscribe as indicated.
-    for (const auto handlers = subscriptions.cbegin(); handlers != subscriptions.end(); handlers++)
+    for (const auto handlers = subscriptions.cbegin(); handlers != subscriptions.end(); std::next(handlers,1))
     {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // DEADLOCK RISK, handler must not return to invoke.
