@@ -119,10 +119,9 @@ void subscriber<Args...>::invoke(Args... args)
 template <typename... Args>
 void subscriber<Args...>::relay(Args... args)
 {
-/*    // This enqueues work while maintaining order.
+    // This enqueues work while maintaining order.
     dispatch_.ordered(&subscriber<Args...>::do_invoke,
         this->shared_from_this(), args...);
-*/
 }
 
 // private
