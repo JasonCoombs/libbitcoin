@@ -175,7 +175,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
             subscribe_mutex_.unlock();
             ///////////////////////////////////////////////////////////////////
         }
-        std::next(handlers,1);
+        handlers = std::next(handlers,1);
     }
 
     ///////////////////////////////////////////////////////////////////////////
