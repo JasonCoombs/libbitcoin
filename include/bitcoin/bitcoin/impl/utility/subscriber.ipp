@@ -146,12 +146,12 @@ void subscriber<Args...>::do_invoke(Args... args)
     // Subscriptions may be created while this loop is executing.
     // Invoke subscribers from temporary list, without subscription renewal.
     const auto handlers = subscriptions.cbegin();
-    while(handlers != subscriptions.end())
+    while(handlers != subscriptions.cend())
     {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // DEADLOCK RISK, handler must not return to invoke.
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        ((handler)*handlers)(args...);
+        (handlers)(args...);
         handlers = std::next(handlers,1);
     }
 
