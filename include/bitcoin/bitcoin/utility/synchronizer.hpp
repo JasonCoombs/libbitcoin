@@ -29,6 +29,7 @@
 #include <bitcoin/bitcoin/error.hpp>
 #include <bitcoin/bitcoin/utility/assert.hpp>
 #include <bitcoin/bitcoin/utility/thread.hpp>
+#define LOG_SYSTEM "system"
 
 namespace libbitcoin {
 
