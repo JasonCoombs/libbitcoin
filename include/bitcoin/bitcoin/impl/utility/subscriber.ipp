@@ -130,31 +130,29 @@ void subscriber<Args...>::do_invoke(Args... args)
 {
     // Critical Section (prevent concurrent handler execution)
     ///////////////////////////////////////////////////////////////////////////
-    unique_lock ulock(invoke_mutex_);
-
+    unique_lock lock(invoke_mutex_);
+    
     // Critical Section (protect stop)
     ///////////////////////////////////////////////////////////////////////////
     subscribe_mutex_.lock();
-
+    
     // Move subscribers from the member list to a temporary list.
     list subscriptions;
-    swap(subscriptions, subscriptions_); // intend for this to call swap(vector& x);
-
+    std::swap(subscriptions, subscriptions_);
+    
     subscribe_mutex_.unlock();
     ///////////////////////////////////////////////////////////////////////////
-
+    
     // Subscriptions may be created while this loop is executing.
     // Invoke subscribers from temporary list, without subscription renewal.
-    const auto handlers = subscriptions.cbegin();
-    while(handlers != subscriptions.cend())
+    for (const auto& handler: subscriptions)
     {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // DEADLOCK RISK, handler must not return to invoke.
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        (handlers)(args...);
-        handlers = std::next(handlers,1);
+        handler(args...);
     }
-
+    
     ///////////////////////////////////////////////////////////////////////////
 }
 

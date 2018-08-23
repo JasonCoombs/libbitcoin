@@ -23,8 +23,6 @@
 #include <memory>
 #include <string>
 #include <utility>
-#include <vector>
-#include <iterator>
 #include <bitcoin/bitcoin/utility/assert.hpp>
 #include <bitcoin/bitcoin/utility/dispatcher.hpp>
 #include <bitcoin/bitcoin/utility/thread.hpp>
@@ -132,52 +130,48 @@ void resubscriber<Args...>::do_invoke(Args... args)
 {
     // Critical Section (prevent concurrent handler execution)
     ///////////////////////////////////////////////////////////////////////////
-    unique_lock ulock(invoke_mutex_);
+    unique_lock lock(invoke_mutex_);
     
     // Critical Section (protect stop)
     ///////////////////////////////////////////////////////////////////////////
     subscribe_mutex_.lock();
-
+    
     // Move subscribers from the member list to a temporary list.
     list subscriptions;
-    swap(subscriptions, subscriptions_); // intend for this to call swap(vector& x);
-
+    std::swap(subscriptions, subscriptions_);
+    
     subscribe_mutex_.unlock();
     ///////////////////////////////////////////////////////////////////////////
-
+    
     // Subscriptions may be created while this loop is executing.
     // Invoke subscribers from temporary list and resubscribe as indicated.
-    const auto handlers = subscriptions.cbegin();
-    while(handlers != subscriptions.end())
+    for (const auto& handler: subscriptions)
     {
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         // DEADLOCK RISK, handler must not return to invoke.
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        bool handled = false;
-        handled = (handlers)(args...);
-        if (handled)
+        if (handler(args...))
         {
             // Critical Section
             ///////////////////////////////////////////////////////////////////
             subscribe_mutex_.lock_upgrade();
-
+            
             if (stopped_)
             {
                 subscribe_mutex_.unlock_upgrade();
                 //-------------------------------------------------------------
                 continue;
             }
-
+            
             subscribe_mutex_.unlock_upgrade_and_lock();
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-            subscriptions_.push_back(handlers);
-
+            subscriptions_.push_back(handler);
+            
             subscribe_mutex_.unlock();
             ///////////////////////////////////////////////////////////////////
         }
-        handlers = std::next(handlers,1);
     }
-
+    
     ///////////////////////////////////////////////////////////////////////////
 }
 
