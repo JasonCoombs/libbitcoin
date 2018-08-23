@@ -107,6 +107,8 @@ public:
         // Another handler cleared this and shortcircuited the count, ignore.
         if (initial_count == clearance_count_)
         {
+            LOG_VERBOSE(LOG_SYSTEM)
+            << "synchronizer operator() incorrect clearance count, ignored.";
             mutex_->unlock_upgrade();
             //-----------------------------------------------------------------
             return;
@@ -123,7 +125,16 @@ public:
         ///////////////////////////////////////////////////////////////////////
 
         if (cleared)
+        {
             handler_(result(ec), std::forward<Args>(args)...);
+            LOG_VERBOSE(LOG_SYSTEM)
+            << "synchronizer operator() cleared ";
+        }
+        else
+        {
+            LOG_VERBOSE(LOG_SYSTEM)
+            << "synchronizer operator() not cleared ";
+        }
     }
 
 private:
