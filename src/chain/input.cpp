@@ -270,12 +270,12 @@ output_point& input::previous_output()
 {
     return previous_output_;
 }
-/*
+
  output_point& input::previous_output() const
 {
     return previous_output_;
 }
-*/
+
 void input::set_previous_output(const output_point& value)
 {
     previous_output_ = value;
