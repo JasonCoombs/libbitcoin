@@ -21,9 +21,13 @@
 
 #include <string>
 #include <bitcoin/bitcoin/define.hpp>
+#include <bitcoin/bitcoin/config/base16.hpp>
+#include <bitcoin/bitcoin/config/header.hpp>
+#include <bitcoin/bitcoin/config/hash160.hpp>
+#include <bitcoin/bitcoin/config/hash256.hpp>
 
 namespace libbitcoin {
-namespace config {
+namespace chain {
 
 void inline add_child(pt::ptree& out_list, const std::string& name,
     const pt::ptree& element, bool json)
@@ -51,11 +55,11 @@ void inline add_child(pt::ptree& out_list, const std::string& name,
  * @returns              A new property tree containing the list.
  */
 template <typename Values>
-pt::ptree property_tree_list(const std::string& name, const Values& values,
+pt::ptree property_tree_list(const std::string& name, Values& values,
     bool json)
 {
     pt::ptree list;
-    for (const auto& value: values)
+    for (auto& value: values)
         add_child(list, name, property_list(value), json);
 
     return list;
@@ -72,10 +76,10 @@ pt::ptree property_tree_list(const std::string& name, const Values& values,
  */
 template <typename Values>
 pt::ptree property_tree_list_of_lists(const std::string& name,
-    const Values& values, bool json)
+    Values& values, bool json)
 {
     pt::ptree list;
-    for (const auto& value: values)
+    for (auto& value: values)
         add_child(list, name, property_list(value, json), json);
 
     return list;
@@ -90,12 +94,12 @@ pt::ptree property_tree_list_of_lists(const std::string& name,
  * @returns              A new property tree containing the list.
  */
 template <typename Values>
-pt::ptree property_value_list(const std::string& name, const Values& values,
+pt::ptree property_value_list(const std::string& name, Values& values,
     bool json)
 {
     pt::ptree list;
     pt::ptree element;
-    for (const auto& value: values)
+    for (auto& value: values)
     {
         element.put_value(value);
         add_child(list, name, element, json);
@@ -104,7 +108,7 @@ pt::ptree property_value_list(const std::string& name, const Values& values,
     return list;
 }
 
-} // namespace config
+} // namespace chain
 } // namespace libbitcoin
 
 #endif

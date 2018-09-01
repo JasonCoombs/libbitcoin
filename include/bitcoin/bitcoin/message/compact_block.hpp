@@ -34,7 +34,7 @@ class BC_API compact_block
 {
 public:
     typedef std::shared_ptr<compact_block> ptr;
-    typedef std::shared_ptr<const compact_block> const_ptr;
+    typedef std::shared_ptr<compact_block> const_ptr;
 
     typedef mini_hash short_id;
     typedef mini_hash_list short_id_list;
@@ -44,18 +44,18 @@ public:
     static compact_block factory(uint32_t version, reader& source);
 
     compact_block();
-    compact_block(const chain::header& header, uint64_t nonce,
+    compact_block(chain::header& header, uint64_t nonce,
         const short_id_list& short_ids,
         const prefilled_transaction::list& transactions);
     compact_block(chain::header&& header, uint64_t nonce,
         short_id_list&& short_ids,
         prefilled_transaction::list&& transactions);
-    compact_block(const compact_block& other);
+    compact_block(compact_block& other);
     compact_block(compact_block&& other);
 
     chain::header& header();
     const chain::header& header() const;
-    void set_header(const chain::header& value);
+    void set_header(chain::header& value);
     void set_header(chain::header&& value);
 
     uint64_t nonce() const;
@@ -82,8 +82,8 @@ public:
     size_t serialized_size(uint32_t version) const;
 
     // This class is move assignable but not copy assignable.
-    compact_block& operator=(compact_block&& other);
-    void operator=(const compact_block&) = delete;
+    const compact_block& operator=(compact_block&& other);
+    void operator=(compact_block&) = delete;
 
     bool operator==(const compact_block& other) const;
     bool operator!=(const compact_block& other) const;

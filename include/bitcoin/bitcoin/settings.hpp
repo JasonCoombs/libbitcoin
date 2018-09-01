@@ -56,7 +56,7 @@ public:
     // The target number of blocks for 2 weeks of work (2016 blocks).
     size_t retargeting_interval;
 
-    config::block genesis_block;
+    chain::block genesis_block;
 
     // Fork settings.
     //--------------------------------------------------------------------------

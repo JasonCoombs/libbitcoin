@@ -22,7 +22,7 @@
 using namespace bc;
 
 // Test helper.
-static bool all_valid(const chain::transaction::list& transactions)
+static bool all_valid(chain::transaction::list& transactions)
 {
     auto valid = true;
 
@@ -97,7 +97,7 @@ BOOST_AUTO_TEST_CASE(block__constructor_1__always__invalid)
 
 BOOST_AUTO_TEST_CASE(block__constructor_2__always__equals_params)
 {
-    const chain::header header(10u,
+    chain::header header(10u,
         hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
         hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
         531234u,
@@ -269,7 +269,7 @@ BOOST_AUTO_TEST_CASE(block__from_data__insufficient_transaction_bytes__failure)
 
 BOOST_AUTO_TEST_CASE(block__genesis__mainnet__valid_structure)
 {
-    const chain::block genesis = settings(bc::config::settings::mainnet).genesis_block;
+    chain::block genesis = settings(bc::config::settings::mainnet).genesis_block;
     BOOST_REQUIRE(genesis.is_valid());
     BOOST_REQUIRE_EQUAL(genesis.transactions().size(), 1u);
     BOOST_REQUIRE(genesis.header().merkle() == genesis.generate_merkle_root());

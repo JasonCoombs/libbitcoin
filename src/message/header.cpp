@@ -86,7 +86,7 @@ header::header(uint32_t version,
 {
 }
 
-header::header(const chain::header& other)
+header::header(chain::header& other)
   : chain::header(other)
 {
 }
@@ -96,7 +96,7 @@ header::header(chain::header&& other)
 {
 }
 
-header::header(const header& other)
+header::header(header& other)
   : chain::header(other)
 {
 }
@@ -187,17 +187,17 @@ header& header::operator=(const header& other)
     chain::header::operator=(other);
     return *this;
 }
-
-bool header::operator==(const chain::header& other) const
+/*
+bool header::operator==(chain::header& other) const
 {
     return chain::header::operator==(other);
 }
 
-bool header::operator!=(const chain::header& other) const
+bool header::operator!=(chain::header& other) const
 {
     return chain::header::operator!=(other);
 }
-
+*/
 bool header::operator==(const header& other) const
 {
     return chain::header::operator==(other);

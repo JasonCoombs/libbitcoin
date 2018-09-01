@@ -63,7 +63,7 @@ inline script_version program::version() const
     return version_;
 }
 
-inline const chain::transaction& program::transaction() const
+inline chain::transaction& program::transaction() const
 {
     return transaction_;
 }

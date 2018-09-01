@@ -59,7 +59,7 @@ prefilled_transaction::prefilled_transaction()
 }
 
 prefilled_transaction::prefilled_transaction(uint64_t index,
-    const chain::transaction& tx)
+    chain::transaction& tx)
   : index_(index), transaction_(tx)
 {
 }
@@ -71,7 +71,7 @@ prefilled_transaction::prefilled_transaction(uint64_t index,
 }
 
 prefilled_transaction::prefilled_transaction(
-    const prefilled_transaction& other)
+    prefilled_transaction& other)
   : prefilled_transaction(other.index_, other.transaction_)
 {
 }
@@ -171,7 +171,7 @@ const chain::transaction& prefilled_transaction::transaction() const
     return transaction_;
 }
 
-void prefilled_transaction::set_transaction(const chain::transaction& tx)
+void prefilled_transaction::set_transaction(chain::transaction& tx)
 {
     transaction_ = tx;
 }
@@ -188,7 +188,7 @@ prefilled_transaction& prefilled_transaction::operator=(prefilled_transaction&& 
     return *this;
 }
 
-prefilled_transaction& prefilled_transaction::operator=(const prefilled_transaction& other)
+prefilled_transaction& prefilled_transaction::operator=(prefilled_transaction& other)
 {
     index_ = other.index_;
     transaction_ = other.transaction_;

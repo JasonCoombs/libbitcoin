@@ -74,6 +74,8 @@ namespace bc = libbitcoin;
     #endif
 #endif
 
+#define LOG_SYSTEM "system"
+
 // Avoid namespace conflict between boost::placeholders and std::placeholders.
 #define BOOST_BIND_NO_PLACEHOLDERS
 

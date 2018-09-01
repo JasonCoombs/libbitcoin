@@ -173,7 +173,7 @@ BOOST_AUTO_TEST_CASE(block__constructor_7__always__equals_params)
 
 BOOST_AUTO_TEST_CASE(block__factory_data_1__genesis_mainnet__success)
 {
-    const chain::block genesis = settings(bc::config::settings::mainnet).genesis_block;
+    chain::block genesis = settings(bc::config::settings::mainnet).genesis_block;
     BOOST_REQUIRE_EQUAL(genesis.serialized_size(), 285u);
     BOOST_REQUIRE_EQUAL(genesis.header().serialized_size(), 80u);
 
@@ -182,7 +182,7 @@ BOOST_AUTO_TEST_CASE(block__factory_data_1__genesis_mainnet__success)
     BOOST_REQUIRE_EQUAL(raw_block.size(), 285u);
 
     // Reload genesis block.
-    const auto block = block::factory(version::level::minimum, raw_block);
+    auto block = block::factory(version::level::minimum, raw_block);
 
     BOOST_REQUIRE(block.is_valid());
     BOOST_REQUIRE(genesis.header() == block.header());
@@ -197,7 +197,7 @@ BOOST_AUTO_TEST_CASE(block__factory_data_1__genesis_mainnet__success)
 
 BOOST_AUTO_TEST_CASE(block__factory_data_2__genesis_mainnet__success)
 {
-    const chain::block genesis = settings(bc::config::settings::mainnet).genesis_block;
+    chain::block genesis = settings(bc::config::settings::mainnet).genesis_block;
     BOOST_REQUIRE_EQUAL(genesis.serialized_size(), 285u);
     BOOST_REQUIRE_EQUAL(genesis.header().serialized_size(), 80u);
 
@@ -207,7 +207,7 @@ BOOST_AUTO_TEST_CASE(block__factory_data_2__genesis_mainnet__success)
 
     // Reload genesis block.
     data_source stream(raw_block);
-    const auto block = block::factory(version::level::minimum, stream);
+    auto block = block::factory(version::level::minimum, stream);
 
     BOOST_REQUIRE(block.is_valid());
     BOOST_REQUIRE(genesis.header() == block.header());
@@ -225,7 +225,7 @@ BOOST_AUTO_TEST_CASE(block__factory_data_2__genesis_mainnet__success)
 
 BOOST_AUTO_TEST_CASE(block__factory_data_3__genesis_mainnet__success)
 {
-    const chain::block genesis = settings(config::settings::mainnet).genesis_block;
+    chain::block genesis = settings(config::settings::mainnet).genesis_block;
     BOOST_REQUIRE_EQUAL(genesis.serialized_size(), 285u);
     BOOST_REQUIRE_EQUAL(genesis.header().serialized_size(), 80u);
 
@@ -236,7 +236,7 @@ BOOST_AUTO_TEST_CASE(block__factory_data_3__genesis_mainnet__success)
     // Reload genesis block.
     data_source stream(raw_block);
     istream_reader reader(stream);
-    const auto block = block::factory(version::level::minimum + 1, reader);
+    auto block = block::factory(version::level::minimum + 1, reader);
 
     BOOST_REQUIRE(block.is_valid());
     BOOST_REQUIRE(genesis.header() == block.header());
@@ -255,14 +255,14 @@ BOOST_AUTO_TEST_CASE(block__factory_data_3__genesis_mainnet__success)
 
 BOOST_AUTO_TEST_CASE(block__operator_assign_equals_1__always__matches_equivalent)
 {
-    const chain::header header(10u,
+    chain::header header(10u,
         hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
         hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
         531234u,
         6523454u,
         68644u);
 
-    const chain::transaction::list transactions
+    chain::transaction::list transactions
     {
         chain::transaction(1, 48, {}, {}),
         chain::transaction(2, 32, {}, {}),
@@ -283,14 +283,14 @@ BOOST_AUTO_TEST_CASE(block__operator_assign_equals_1__always__matches_equivalent
 
 BOOST_AUTO_TEST_CASE(block__operator_assign_equals_2__always__matches_equivalent)
 {
-    const chain::header header(10u,
+    chain::header header(10u,
         hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
         hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
         531234u,
         6523454u,
         68644u);
 
-    const chain::transaction::list transactions
+    chain::transaction::list transactions
     {
         chain::transaction(1, 48, {}, {}),
         chain::transaction(2, 32, {}, {}),
@@ -312,7 +312,7 @@ BOOST_AUTO_TEST_CASE(block__operator_assign_equals_2__always__matches_equivalent
 
 BOOST_AUTO_TEST_CASE(block__operator_boolean_equals_1__duplicates__returns_true)
 {
-    const chain::block expected(
+    chain::block expected(
         chain::header(10u,
             hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
             hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
@@ -331,7 +331,7 @@ BOOST_AUTO_TEST_CASE(block__operator_boolean_equals_1__duplicates__returns_true)
 
 BOOST_AUTO_TEST_CASE(block__operator_boolean_equals_1__differs__returns_false)
 {
-    const chain::block expected(
+    chain::block expected(
         chain::header(10u,
             hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
             hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
@@ -351,7 +351,7 @@ BOOST_AUTO_TEST_CASE(block__operator_boolean_equals_1__differs__returns_false)
 
 BOOST_AUTO_TEST_CASE(block__operator_boolean_not_equals_1__duplicates__returns_false)
 {
-    const chain::block expected(
+    chain::block expected(
         chain::header(10u,
             hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
             hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
@@ -370,7 +370,7 @@ BOOST_AUTO_TEST_CASE(block__operator_boolean_not_equals_1__duplicates__returns_f
 
 BOOST_AUTO_TEST_CASE(block__operator_boolean_not_equals_1__differs__returns_true)
 {
-    const chain::block expected(
+    chain::block expected(
         chain::header(10u,
             hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
             hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
@@ -390,7 +390,7 @@ BOOST_AUTO_TEST_CASE(block__operator_boolean_not_equals_1__differs__returns_true
 
 BOOST_AUTO_TEST_CASE(block__operator_boolean_equals_2__duplicates__returns_true)
 {
-    const message::block expected(
+    message::block expected(
         chain::header(10u,
             hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
             hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
@@ -409,7 +409,7 @@ BOOST_AUTO_TEST_CASE(block__operator_boolean_equals_2__duplicates__returns_true)
 
 BOOST_AUTO_TEST_CASE(block__operator_boolean_equals_2__differs__returns_false)
 {
-    const message::block expected(
+    message::block expected(
         chain::header(10u,
             hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
             hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
@@ -429,7 +429,7 @@ BOOST_AUTO_TEST_CASE(block__operator_boolean_equals_2__differs__returns_false)
 
 BOOST_AUTO_TEST_CASE(block__operator_boolean_not_equals_2__duplicates__returns_false)
 {
-    const message::block expected(
+    message::block expected(
         chain::header(10u,
             hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
             hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),
@@ -448,7 +448,7 @@ BOOST_AUTO_TEST_CASE(block__operator_boolean_not_equals_2__duplicates__returns_f
 
 BOOST_AUTO_TEST_CASE(block__operator_boolean_not_equals_2__differs__returns_true)
 {
-    const message::block expected(
+    message::block expected(
         chain::header(10u,
             hash_literal("000000000019d6689c085ae165831e934ff763ae46a2a6c172b3f1b60a8ce26f"),
             hash_literal("4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"),

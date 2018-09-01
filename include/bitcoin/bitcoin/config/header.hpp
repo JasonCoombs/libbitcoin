@@ -51,13 +51,13 @@ public:
      * @param[in]  value  The value to initialize with.
      */
     header(const chain::header& value);
-
+    
     /**
      * Copy constructor.
      * @param[in]  other  The object to copy into self on construct.
      */
     header(const header& other);
-
+    
     /**
      * Overload cast to internal type.
      * @return  This object's value cast to internal type.

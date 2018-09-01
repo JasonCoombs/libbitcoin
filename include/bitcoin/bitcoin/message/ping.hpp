@@ -35,7 +35,7 @@ class BC_API ping
 {
 public:
     typedef std::shared_ptr<ping> ptr;
-    typedef std::shared_ptr<const ping> const_ptr;
+    typedef std::shared_ptr<ping> const_ptr;
 
     static ping factory(uint32_t version, const data_chunk& data);
     static ping factory(uint32_t version, std::istream& stream);

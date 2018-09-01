@@ -62,7 +62,7 @@ merkle_block::merkle_block()
 {
 }
 
-merkle_block::merkle_block(const chain::header& header,
+merkle_block::merkle_block(chain::header& header,
     size_t total_transactions, const hash_list& hashes,
     const data_chunk& flags)
   : header_(header), total_transactions_(total_transactions), hashes_(hashes),
@@ -79,14 +79,14 @@ merkle_block::merkle_block(chain::header&& header, size_t total_transactions,
 
 // Hack: use of safe_unsigned here isn't great. We should consider using size_t
 // for the transaction count and invalidating on deserialization and construct.
-merkle_block::merkle_block(const chain::block& block)
+merkle_block::merkle_block(chain::block& block)
   : merkle_block(block.header(),
         safe_unsigned<uint32_t>(block.transactions().size()),
         block.to_hashes(), {})
 {
 }
 
-merkle_block::merkle_block(const merkle_block& other)
+merkle_block::merkle_block(merkle_block& other)
   : merkle_block(other.header_, other.total_transactions_, other.hashes_,
       other.flags_)
 {
@@ -205,7 +205,7 @@ const chain::header& merkle_block::header() const
     return header_;
 }
 
-void merkle_block::set_header(const chain::header& value)
+void merkle_block::set_header(chain::header& value)
 {
     header_ = value;
 }
@@ -265,7 +265,7 @@ void merkle_block::set_flags(data_chunk&& value)
     flags_ = std::move(value);
 }
 
-merkle_block& merkle_block::operator=(merkle_block&& other)
+const merkle_block& merkle_block::operator=(merkle_block&& other)
 {
     header_ = std::move(other.header_);
     hashes_ = std::move(other.hashes_);

@@ -34,7 +34,7 @@ class BC_API address
 {
 public:
     typedef std::shared_ptr<address> ptr;
-    typedef std::shared_ptr<const address> const_ptr;
+    typedef std::shared_ptr<address> const_ptr;
 
     static address factory(uint32_t version, const data_chunk& data);
     static address factory(uint32_t version, std::istream& stream);

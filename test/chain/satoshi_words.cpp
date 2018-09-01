@@ -27,12 +27,12 @@ BOOST_AUTO_TEST_SUITE(satoshi_words)
 BOOST_AUTO_TEST_CASE(satoshi_words_mainnet)
 {
     // Create mainnet genesis block (contains a single coinbase transaction).
-    const chain::block block = bc::settings(bc::config::settings::mainnet).genesis_block;
-    const auto& transactions = block.transactions();
+    chain::block block = bc::settings(bc::config::settings::mainnet).genesis_block;
+    auto& transactions = block.transactions();
     BOOST_REQUIRE_EQUAL(transactions.size(), 1u);
 
     // Coinbase tx (first in block) has a single input.
-    const auto& coinbase_tx = transactions[0];
+    auto& coinbase_tx = transactions[0];
     const auto& coinbase_inputs = coinbase_tx.inputs();
     BOOST_REQUIRE_EQUAL(coinbase_inputs.size(), 1u);
 

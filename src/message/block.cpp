@@ -76,7 +76,7 @@ block::block(chain::block&& other)
 {
 }
 
-block::block(const chain::block& other)
+block::block(chain::block& other)
   : chain::block(other)
 {
 }
@@ -86,8 +86,8 @@ block::block(chain::header&& header, chain::transaction::list&& transactions)
 {
 }
 
-block::block(const chain::header& header,
-    const chain::transaction::list& transactions)
+block::block(chain::header& header,
+    chain::transaction::list& transactions)
   : chain::block(header, transactions)
 {
 }
@@ -146,22 +146,22 @@ block& block::operator=(block&& other)
     return *this;
 }
 
-bool block::operator==(const chain::block& other) const
+bool block::operator==(chain::block& other) const
 {
     return chain::block::operator==(other);
 }
 
-bool block::operator!=(const chain::block& other) const
+bool block::operator!=(chain::block& other) const
 {
     return chain::block::operator!=(other);
 }
 
-bool block::operator==(const block& other) const
+bool block::operator==(block& other) const
 {
     return chain::block::operator==(other);
 }
 
-bool block::operator!=(const block& other) const
+bool block::operator!=(block& other) const
 {
     return !(*this == other);
 }

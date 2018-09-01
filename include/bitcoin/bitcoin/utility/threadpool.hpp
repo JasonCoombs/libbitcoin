@@ -70,7 +70,7 @@ public:
 
     /**
      * Abandon outstanding operations without dispatching handlers.
-     * WARNING: This call is unsave and should be avoided.
+     * WARNING: This call is unsafe and should be avoided.
      */
     void abort();
 

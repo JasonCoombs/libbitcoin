@@ -26,7 +26,7 @@ using namespace bc::config;
 
 BOOST_AUTO_TEST_SUITE(block_tests)
 
-static const std::string encoded_genesis_block =
+static std::string encoded_genesis_block =
     "01000000"
     "0000000000000000000000000000000000000000000000000000000000000000"
     "3ba3edfd7a7b12b27ac72c3e67768f617fc81bc3888a51323a9fb8aa4b1e5e4a"
@@ -47,7 +47,7 @@ static const std::string encoded_genesis_block =
     "00000000";
 
 
-static const auto genesis_block = block(encoded_genesis_block);
+static auto genesis_block = block(encoded_genesis_block);
 
 // ------------------------------------------------------------------------- //
 
@@ -55,19 +55,19 @@ BOOST_AUTO_TEST_SUITE(block__construct)
 
 BOOST_AUTO_TEST_CASE(block__construct__default)
 {
-    const block block;
+    block block;
     BOOST_REQUIRE_EQUAL(block.to_string(), std::string(162, '0'));
 }
 
 BOOST_AUTO_TEST_CASE(block__construct__copy__expected)
 {
-    const block block(genesis_block);
+    block block(genesis_block);
     BOOST_REQUIRE_EQUAL(block, genesis_block);
 }
 
 BOOST_AUTO_TEST_CASE(block__construct__string__expected)
 {
-    const block block(encoded_genesis_block);
+    block block(encoded_genesis_block);
     BOOST_REQUIRE_EQUAL(block, genesis_block);
 }
 

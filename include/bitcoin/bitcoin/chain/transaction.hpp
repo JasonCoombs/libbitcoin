@@ -86,7 +86,7 @@ public:
     transaction();
 
     transaction(transaction&& other);
-    transaction(const transaction& other);
+    transaction(transaction& other);
 
     transaction(uint32_t version, uint32_t locktime, input::list&& inputs,
         output::list&& outputs);
@@ -97,10 +97,10 @@ public:
     //-------------------------------------------------------------------------
 
     transaction& operator=(transaction&& other);
-    transaction& operator=(const transaction& other);
+    transaction& operator=(transaction& other);
 
     bool operator==(const transaction& other) const;
-    bool operator!=(const transaction& other) const;
+    bool operator!=(transaction& other) const;
 
     // Deserialization.
     //-------------------------------------------------------------------------
@@ -156,9 +156,9 @@ public:
     void set_outputs(const output::list& value);
     void set_outputs(output::list&& value);
 
-    hash_digest outputs_hash() const;
-    hash_digest inpoints_hash() const;
-    hash_digest sequences_hash() const;
+    hash_digest outputs_hash() ;
+    hash_digest inpoints_hash() ;
+    hash_digest sequences_hash() ;
     hash_digest hash(bool witness=false) const;
 
     // Utilities.
@@ -170,36 +170,36 @@ public:
     // Validation.
     //-------------------------------------------------------------------------
 
-    uint64_t fees() const;
+    uint64_t fees() ;
     point::list previous_outputs() const;
-    point::list missing_previous_outputs() const;
-    hash_list missing_previous_transactions() const;
-    uint64_t total_input_value() const;
-    uint64_t total_output_value() const;
-    size_t signature_operations() const;
-    size_t signature_operations(bool bip16, bool bip141) const;
+    point::list missing_previous_outputs() ;
+    hash_list missing_previous_transactions() ;
+    uint64_t total_input_value() ;
+    uint64_t total_output_value() ;
+    size_t signature_operations() ;
+    size_t signature_operations(bool bip16, bool bip141) ;
     size_t weight() const;
 
     bool is_coinbase() const;
     bool is_null_non_coinbase() const;
     bool is_oversized_coinbase() const;
-    bool is_mature(size_t height) const;
-    bool is_overspent() const;
+    bool is_mature(size_t height) ;
+    bool is_overspent() ;
     bool is_internal_double_spend() const;
-    bool is_confirmed_double_spend() const;
-    bool is_dusty(uint64_t minimum_output_value) const;
-    bool is_missing_previous_outputs() const;
+    bool is_confirmed_double_spend() ;
+    bool is_dusty(uint64_t minimum_output_value) ;
+    bool is_missing_previous_outputs() ;
     bool is_final(size_t block_height, uint32_t block_time) const;
-    bool is_locked(size_t block_height, uint32_t median_time_past) const;
+    bool is_locked(size_t block_height, uint32_t median_time_past) ;
     bool is_locktime_conflict() const;
     bool is_segregated() const;
 
-    code check(uint64_t max_money, bool transaction_pool=true) const;
-    code accept(bool transaction_pool=true) const;
-    code accept(const chain_state& state, bool transaction_pool=true) const;
-    code connect() const;
-    code connect(const chain_state& state) const;
-    code connect_input(const chain_state& state, size_t input_index) const;
+    code check(uint64_t max_money, bool transaction_pool=true) ;
+    code accept(bool transaction_pool=true) ;
+    code accept(const chain_state& state, bool transaction_pool=true) ;
+    code connect() ;
+    code connect(const chain_state& state) ;
+    code connect_input(const chain_state& state, size_t input_index) ;
 
     // THIS IS FOR LIBRARY USE ONLY, DO NOT CREATE A DEPENDENCY ON IT.
     mutable validation metadata;

@@ -34,7 +34,7 @@ class BC_API filter_add
 {
 public:
     typedef std::shared_ptr<filter_add> ptr;
-    typedef std::shared_ptr<const filter_add> const_ptr;
+    typedef std::shared_ptr<filter_add> const_ptr;
 
     static filter_add factory(uint32_t version, const data_chunk& data);
     static filter_add factory(uint32_t version, std::istream& stream);

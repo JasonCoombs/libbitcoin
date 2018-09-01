@@ -19,6 +19,9 @@
 #include <bitcoin/bitcoin/utility/threadpool.hpp>
 
 #include <thread>
+#include <bitcoin/bitcoin.hpp>
+#include <bitcoin/bitcoin/error.hpp>
+#include <bitcoin/bitcoin/log/source.hpp>
 #include <bitcoin/bitcoin/utility/asio.hpp>
 #include <bitcoin/bitcoin/utility/assert.hpp>
 #include <bitcoin/bitcoin/utility/thread.hpp>
@@ -28,11 +31,21 @@ namespace libbitcoin {
 threadpool::threadpool(size_t number_threads, thread_priority priority)
   : size_(0)
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " threadpool()";
+
     spawn(number_threads, priority);
 }
 
 threadpool::~threadpool()
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " ~threadpool()";
+
     shutdown();
     join();
 }
@@ -40,18 +53,33 @@ threadpool::~threadpool()
 // Should not be called during spawn.
 bool threadpool::empty() const
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " threadpool::empty()";
+
     return size() != 0;
 }
 
 // Should not be called during spawn.
 size_t threadpool::size() const
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " threadpool::size()";
+
     return size_.load();
 }
 
 // This is not thread safe.
 void threadpool::spawn(size_t number_threads, thread_priority priority)
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " threadpool::spawn()";
+
     // This allows the pool to be restarted.
     service_.reset();
 
@@ -61,6 +89,11 @@ void threadpool::spawn(size_t number_threads, thread_priority priority)
 
 void threadpool::spawn_once(thread_priority priority)
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " threadpool::spawn_once()";
+
     ///////////////////////////////////////////////////////////////////////////
     // Critical Section
     work_mutex_.lock_upgrade();
@@ -95,11 +128,21 @@ void threadpool::spawn_once(thread_priority priority)
 
 void threadpool::abort()
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " threadpool::abort()";
+
     service_.stop();
 }
 
 void threadpool::shutdown()
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " threadpool::shutdown()";
+
     ///////////////////////////////////////////////////////////////////////////
     // Critical Section
     unique_lock lock(work_mutex_);
@@ -110,6 +153,11 @@ void threadpool::shutdown()
 
 void threadpool::join()
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " threadpool::join()";
+
     ///////////////////////////////////////////////////////////////////////////
     // Critical Section
     unique_lock lock(threads_mutex_);
@@ -130,11 +178,21 @@ void threadpool::join()
 
 asio::service& threadpool::service()
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " threadpool::service()";
+
     return service_;
 }
 
 const asio::service& threadpool::service() const
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " const threadpool::service() const";
+
     return service_;
 }
 

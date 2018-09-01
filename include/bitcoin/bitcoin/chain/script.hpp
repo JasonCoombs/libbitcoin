@@ -128,19 +128,19 @@ public:
     // Signing.
     //-------------------------------------------------------------------------
 
-    static hash_digest generate_signature_hash(const transaction& tx,
+    static hash_digest generate_signature_hash(transaction& tx,
         uint32_t input_index, const script& script_code, uint8_t sighash_type,
         script_version version=script_version::unversioned,
         uint64_t value=max_uint64);
 
     static bool check_signature(const ec_signature& signature,
         uint8_t sighash_type, const data_chunk& public_key,
-        const script& script_code, const transaction& tx, uint32_t input_index,
+        const script& script_code, transaction& tx, uint32_t input_index,
         script_version version=script_version::unversioned,
         uint64_t value=max_uint64);
 
     static bool create_endorsement(endorsement& out, const ec_secret& secret,
-        const script& prevout_script, const transaction& tx,
+        const script& prevout_script, transaction& tx,
         uint32_t input_index, uint8_t sighash_type,
         script_version version=script_version::unversioned,
         uint64_t value=max_uint64);
@@ -149,9 +149,9 @@ public:
     //-------------------------------------------------------------------------
 
     /// Transaction helpers.
-    static hash_digest to_outputs(const transaction& tx);
-    static hash_digest to_inpoints(const transaction& tx);
-    static hash_digest to_sequences(const transaction& tx);
+    static hash_digest to_outputs(transaction& tx);
+    static hash_digest to_inpoints(transaction& tx);
+    static hash_digest to_sequences(transaction& tx);
 
     /// Determine if the fork is enabled in the active forks set.
     static bool is_enabled(uint32_t active_forks, rule_fork fork)
@@ -210,10 +210,10 @@ public:
     //-------------------------------------------------------------------------
 
     // This obtains the previous output from metadata.
-    static code verify(const transaction& tx, uint32_t input_index,
+    static code verify(transaction& tx, uint32_t input_index,
         uint32_t forks);
 
-    static code verify(const transaction& tx, uint32_t input_index,
+    static code verify(transaction& tx, uint32_t input_index,
         uint32_t forks, const script& prevout_script, uint64_t value);
 
 protected:
@@ -229,9 +229,9 @@ private:
     static size_t serialized_size(const operation::list& ops);
     static data_chunk operations_to_data(const operation::list& ops);
     static hash_digest generate_unversioned_signature_hash(
-        const transaction& tx, uint32_t input_index,
+        transaction& tx, uint32_t input_index,
         const script& script_code, uint8_t sighash_type);
-    static hash_digest generate_version_0_signature_hash(const transaction& tx,
+    static hash_digest generate_version_0_signature_hash(transaction& tx,
         uint32_t input_index, const script& script_code, uint64_t value,
         uint8_t sighash_type);
 

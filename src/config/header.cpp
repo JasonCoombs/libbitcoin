@@ -41,21 +41,21 @@ header::header(const std::string& hexcode)
     std::stringstream(hexcode) >> *this;
 }
 
-header::header(const chain::header& value)
-  : value_(value)
-{
-}
-
-header::header(const header& other)
-  : header(other.value_)
-{
-}
-
-header::operator const chain::header&() const
-{
-    return value_;
-}
-
+    header::header(const chain::header& value)
+    : value_(value)
+    {
+    }
+    
+    header::header(const header& other)
+    : header(other.value_)
+    {
+    }
+    
+    header::operator const chain::header&() const
+    {
+        return value_;
+    }
+    
 std::istream& operator>>(std::istream& input, header& argument)
 {
     std::string hexcode;

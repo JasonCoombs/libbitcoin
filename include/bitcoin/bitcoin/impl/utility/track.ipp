@@ -29,9 +29,6 @@
 // libbitcoin defines the log and tracking but does not use them.
 // These are defined in bc so that they can be used in network and blockchain.
 
-// Log name.
-#define LOG_SYSTEM "system"
-
 template <class Shared>
 std::atomic<size_t> track<Shared>::instances(0);
 

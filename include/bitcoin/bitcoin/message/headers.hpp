@@ -40,21 +40,21 @@ class BC_API headers
 {
 public:
     typedef std::shared_ptr<headers> ptr;
-    typedef std::shared_ptr<const headers> const_ptr;
+    typedef std::shared_ptr<headers> const_ptr;
 
     static headers factory(uint32_t version, const data_chunk& data);
     static headers factory(uint32_t version, std::istream& stream);
     static headers factory(uint32_t version, reader& source);
 
     headers();
-    headers(const header::list& values);
+    headers(header::list& values);
     headers(header::list&& values);
-    headers(const std::initializer_list<header>& values);
-    headers(const headers& other);
+//    headers(const std::initializer_list<header>& values);
+    headers(headers& other);
     headers(headers&& other);
 
     header::list& elements();
-    const header::list& elements() const;
+//    header::list& elements() const;
     void set_elements(const header::list& values);
     void set_elements(header::list&& values);
 

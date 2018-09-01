@@ -388,7 +388,7 @@ BOOST_AUTO_TEST_CASE(header__is_valid_timestamp__timestamp_greater_than_2_hours_
 
 BOOST_AUTO_TEST_CASE(header__is_valid_proof_of_work__bits_exceeds_maximum__returns_false)
 {
-    const settings settings;
+    settings settings;
     chain::header instance;
     instance.set_bits(settings.retarget_proof_of_work_limit + 1);
     BOOST_REQUIRE(!instance.is_valid_proof_of_work(settings.retarget_proof_of_work_limit, settings.no_retarget_proof_of_work_limit, true));
@@ -396,7 +396,7 @@ BOOST_AUTO_TEST_CASE(header__is_valid_proof_of_work__bits_exceeds_maximum__retur
 
 BOOST_AUTO_TEST_CASE(header__is_valid_proof_of_work__no_retarget_bits_exceeds_maximum__returns_false)
 {
-    const settings settings;
+    settings settings;
     chain::header instance;
     instance.set_bits(settings.no_retarget_proof_of_work_limit + 1);
     BOOST_REQUIRE(!instance.is_valid_proof_of_work(settings.retarget_proof_of_work_limit, settings.no_retarget_proof_of_work_limit, false));
@@ -404,7 +404,7 @@ BOOST_AUTO_TEST_CASE(header__is_valid_proof_of_work__no_retarget_bits_exceeds_ma
 
 BOOST_AUTO_TEST_CASE(header__is_valid_proof_of_work__hash_greater_bits__returns_false)
 {
-    const settings settings;
+    settings settings;
     const chain::header instance(
         11234u,
         hash_literal("abababababababababababababababababababababababababababababababab"),
@@ -418,7 +418,7 @@ BOOST_AUTO_TEST_CASE(header__is_valid_proof_of_work__hash_greater_bits__returns_
 
 BOOST_AUTO_TEST_CASE(header__is_valid_proof_of_work__hash_less_than_bits__returns_true)
 {
-    const settings settings;
+    settings settings;
     const chain::header instance(
         4u,
         hash_literal("000000000000000003ddc1e929e2944b8b0039af9aa0d826c480a83d8b39c373"),
@@ -437,7 +437,7 @@ BOOST_AUTO_TEST_CASE(header__proof1__genesis_mainnet__expected)
 
 BOOST_AUTO_TEST_CASE(header__proof2__genesis_mainnet__expected)
 {
-    const chain::block block = settings(bc::config::settings::mainnet)
+    chain::block block = settings(bc::config::settings::mainnet)
         .genesis_block;
     BOOST_REQUIRE_EQUAL(block.header().proof(), 0x0000000100010001);
 }

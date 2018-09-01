@@ -66,7 +66,7 @@ public:
     };
 
     typedef std::shared_ptr<reject> ptr;
-    typedef std::shared_ptr<const reject> const_ptr;
+    typedef std::shared_ptr<reject> const_ptr;
 
     static reject factory(uint32_t version, const data_chunk& data);
     static reject factory(uint32_t version, std::istream& stream);

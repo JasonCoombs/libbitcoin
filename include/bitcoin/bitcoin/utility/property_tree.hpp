@@ -24,11 +24,15 @@
 #include <vector>
 #include <boost/property_tree/ptree.hpp>
 #include <bitcoin/bitcoin/define.hpp>
-#include <bitcoin/bitcoin/chain/points_value.hpp>
+#include <bitcoin/bitcoin/config/base16.hpp>
 #include <bitcoin/bitcoin/config/header.hpp>
-#include <bitcoin/bitcoin/config/input.hpp>
-#include <bitcoin/bitcoin/config/output.hpp>
-#include <bitcoin/bitcoin/config/transaction.hpp>
+#include <bitcoin/bitcoin/config/hash160.hpp>
+#include <bitcoin/bitcoin/config/hash256.hpp>
+#include <bitcoin/bitcoin/chain/points_value.hpp>
+#include <bitcoin/bitcoin/chain/header.hpp>
+#include <bitcoin/bitcoin/chain/input.hpp>
+#include <bitcoin/bitcoin/chain/output.hpp>
+#include <bitcoin/bitcoin/chain/transaction.hpp>
 
 namespace pt = boost::property_tree;
 
@@ -47,21 +51,21 @@ typedef std::map<std::string, std::string> settings_list;
  * @param[in]  header  The header.
  * @return             A property list.
  */
-BC_API pt::ptree property_list(const config::header& header);
+BC_API pt::ptree property_list(chain::header& header);
 
 /**
  * Generate a property tree for a block header.
  * @param[in]  header  The header.
  * @return             A property tree.
  */
-BC_API pt::ptree property_tree(const config::header& header);
+BC_API pt::ptree property_tree(chain::header& header);
 
 /**
  * Generate a property tree for a set of headers.
  * @param[in]  headers  The set of headers.
  * @return              A property tree.
  */
-BC_API pt::ptree property_tree(const std::vector<config::header>& headers,
+BC_API pt::ptree property_tree(std::vector<chain::header>& headers,
     bool json);
 
 /**
@@ -69,14 +73,14 @@ BC_API pt::ptree property_tree(const std::vector<config::header>& headers,
  * @param[in]  tx_input  The input.
  * @return               A property list.
  */
-BC_API pt::ptree property_list(const chain::input& tx_input);
+BC_API pt::ptree property_list(chain::input& tx_input);
 
 /**
  * Generate a property tree for a transaction input.
  * @param[in]  tx_input  The input.
  * @return               A property tree.
  */
-BC_API pt::ptree property_tree(const chain::input& tx_input);
+BC_API pt::ptree property_tree(chain::input& tx_input);
 
 /**
  * Generate a property tree for a set of transaction inputs.
@@ -84,21 +88,21 @@ BC_API pt::ptree property_tree(const chain::input& tx_input);
  * @param[in]  json       Use json array formatting.
  * @return                A property tree.
  */
-BC_API pt::ptree property_tree(const chain::input::list& tx_inputs, bool json);
+BC_API pt::ptree property_tree(chain::input::list& tx_inputs, bool json);
 
 /**
  * Generate a property list for an input.
  * @param[in]  input  The input.
  * @return            A property list.
  */
-BC_API pt::ptree property_list(const config::input& input);
+BC_API pt::ptree property_list(chain::input& input);
 
 /**
  * Generate a property tree for an input.
  * @param[in]  input  The input.
  * @return            A property tree.
  */
-BC_API pt::ptree property_tree(const config::input& input);
+BC_API pt::ptree property_tree(chain::input& input);
 
 /**
  * Generate a property tree for a set of inputs.
@@ -106,7 +110,7 @@ BC_API pt::ptree property_tree(const config::input& input);
  * @param[in]  json    Use json array formatting.
  * @return             A property tree.
  */
-BC_API pt::ptree property_tree(const std::vector<config::input>& inputs,
+BC_API pt::ptree property_tree(std::vector<chain::input>& inputs,
     bool json);
 
 /**
@@ -114,14 +118,14 @@ BC_API pt::ptree property_tree(const std::vector<config::input>& inputs,
  * @param[in]  tx_output  The transaction output.
  * @return                A property list.
  */
-BC_API pt::ptree property_list(const chain::output& tx_output);
+BC_API pt::ptree property_list(chain::output& tx_output);
 
 /**
  * Generate a property tree for a transaction output.
  * @param[in]  tx_output  The transaction output.
  * @return                A property tree.
  */
-BC_API pt::ptree property_tree(const chain::output& tx_output);
+BC_API pt::ptree property_tree(chain::output& tx_output);
 
 /**
  * Generate a property tree for a set of transaction outputs.
@@ -129,7 +133,7 @@ BC_API pt::ptree property_tree(const chain::output& tx_output);
  * @param[in]  json        Use json array formatting.
  * @return                 A property tree.
  */
-BC_API pt::ptree property_tree(const chain::output::list& tx_outputs,
+BC_API pt::ptree property_tree(chain::output::list& tx_outputs,
     bool json);
 
 /**
@@ -137,7 +141,7 @@ BC_API pt::ptree property_tree(const chain::output::list& tx_outputs,
  * @param[in]  point  The point value.
  * @return            A property list.
  */
-BC_API pt::ptree property_list(const chain::point_value& point);
+BC_API pt::ptree property_list(chain::point_value& point);
 
 /**
  * Generate a property tree for points value.
@@ -145,7 +149,7 @@ BC_API pt::ptree property_list(const chain::point_value& point);
  * @param[in]  json  Use json array formatting.
  * @return           A property tree.
  */
-BC_API pt::ptree property_tree(const chain::points_value& values, bool json);
+BC_API pt::ptree property_tree(chain::points_value& values, bool json);
 
 /**
  * Generate a property list for a transaction.
@@ -153,7 +157,7 @@ BC_API pt::ptree property_tree(const chain::points_value& values, bool json);
  * @param[in]  json         Use json array formatting.
  * @return                  A property list.
  */
-BC_API pt::ptree property_list(const config::transaction& transaction, bool json);
+BC_API pt::ptree property_list(chain::transaction& transaction, bool json);
 
 /**
  * Generate a property tree for a transaction.
@@ -161,7 +165,7 @@ BC_API pt::ptree property_list(const config::transaction& transaction, bool json
  * @param[in]  json         Use json array formatting.
  * @return                  A property tree.
  */
-BC_API pt::ptree property_tree(const config::transaction& transaction, bool json);
+BC_API pt::ptree property_tree(chain::transaction& transaction, bool json);
 
 /**
  * Generate a property tree for a set of transactions.
@@ -169,7 +173,7 @@ BC_API pt::ptree property_tree(const config::transaction& transaction, bool json
  * @param[in]  json          Use json array formatting.
  * @return                   A property tree.
  */
-BC_API pt::ptree property_tree(const std::vector<config::transaction>& transactions,
+BC_API pt::ptree property_tree(std::vector<chain::transaction>& transactions,
     bool json);
 
 /**
@@ -177,14 +181,14 @@ BC_API pt::ptree property_tree(const std::vector<config::transaction>& transacti
  * @param[in]  wrapper  The wrapper instance.
  * @return              A property list.
  */
-BC_API pt::ptree property_list(const wallet::wrapped_data& wrapper);
+BC_API pt::ptree property_list(wallet::wrapped_data& wrapper);
 
 /**
  * Generate a property tree for a wrapper.
  * @param[in]  wrapper  The wrapper instance.
  * @return              A property tree.
  */
-BC_API pt::ptree property_tree(const wallet::wrapped_data& wrapper);
+BC_API pt::ptree property_tree(wallet::wrapped_data& wrapper);
 
 /**
  * Create a property list for the fetch-tx-index command.
@@ -193,7 +197,7 @@ BC_API pt::ptree property_tree(const wallet::wrapped_data& wrapper);
  * @param[in]  index   The tx index.
  * @returns            A new property list containing the list.
  */
-BC_API pt::ptree property_list(const hash_digest& hash, size_t height,
+BC_API pt::ptree property_list(hash_digest& hash, size_t height,
     size_t index);
 
 /**
@@ -203,7 +207,7 @@ BC_API pt::ptree property_list(const hash_digest& hash, size_t height,
  * @param[in]  index   The tx index.
  * @returns            A new property tree containing the list.
  */
-BC_API pt::ptree property_tree(const hash_digest& hash, size_t height,
+BC_API pt::ptree property_tree(hash_digest& hash, size_t height,
     size_t index);
 
 /**
@@ -211,7 +215,7 @@ BC_API pt::ptree property_tree(const hash_digest& hash, size_t height,
  * @param[in]  settings   The list of settings.
  * @returns               A new property tree containing the settings.
  */
-BC_API pt::ptree property_tree(const settings_list& settings);
+BC_API pt::ptree property_tree(settings_list& settings);
 
 /**
  * Create a property tree for an error code with a corresponding sequence.
@@ -219,7 +223,7 @@ BC_API pt::ptree property_tree(const settings_list& settings);
  * @param[in]  sequence The sequence.
  * @returns             A new property tree containing the error and sequence.
  */
-BC_API pt::ptree property_tree(const std::error_code& code, uint32_t sequence);
+BC_API pt::ptree property_tree(std::error_code& code, uint32_t sequence);
 
 /**
  * Create a property tree for a block height with a corresponding sequence.

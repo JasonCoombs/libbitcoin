@@ -29,7 +29,7 @@
 #include <bitcoin/bitcoin/error.hpp>
 #include <bitcoin/bitcoin/utility/assert.hpp>
 #include <bitcoin/bitcoin/utility/thread.hpp>
-#define LOG_SYSTEM "system"
+#include <bitcoin/bitcoin/log/source.hpp>
 
 namespace libbitcoin {
 
@@ -66,6 +66,11 @@ public:
     // Determine if the code is cause for termination.
     bool complete(const code& ec)
     {
+/*        const auto this_id = boost::this_thread::get_id();
+        LOG_VERBOSE("system")
+        << this_id
+        << " complete()";
+*/
         switch (terminate_)
         {
             case synchronizer_terminate::on_error:
@@ -82,6 +87,11 @@ public:
     // Assuming we are terminating, generate the proper result code.
     code result(const code& ec)
     {
+/*        const auto this_id = boost::this_thread::get_id();
+        LOG_VERBOSE("system")
+        << this_id
+        << " result()";
+*/
         switch (terminate_)
         {
             case synchronizer_terminate::on_error:
@@ -98,6 +108,11 @@ public:
     template <typename... Args>
     void operator()(const code& ec, Args&&... args)
     {
+/*        const auto this_id = boost::this_thread::get_id();
+        LOG_VERBOSE("system")
+        << this_id
+        << " synchronizer operator()";
+*/
         // Critical Section
         ///////////////////////////////////////////////////////////////////////
         mutex_->lock_upgrade();
@@ -108,8 +123,10 @@ public:
         // Another handler cleared this and shortcircuited the count, ignore.
         if (initial_count == clearance_count_)
         {
-            LOG_VERBOSE(LOG_SYSTEM)
-            << "synchronizer operator() incorrect clearance count, ignored.";
+ /*           LOG_VERBOSE("system")
+            << this_id
+            << " synchronizer operator() incorrect clearance count, ignored.";
+  */
             mutex_->unlock_upgrade();
             //-----------------------------------------------------------------
             return;
@@ -128,14 +145,18 @@ public:
         if (cleared)
         {
             handler_(result(ec), std::forward<Args>(args)...);
-            LOG_VERBOSE(LOG_SYSTEM)
-            << "synchronizer operator() cleared ";
+        }
+/*            LOG_VERBOSE("system")
+            << this_id
+            << " synchronizer operator() cleared ";
         }
         else
         {
-            LOG_VERBOSE(LOG_SYSTEM)
-            << "synchronizer operator() not cleared ";
+            LOG_VERBOSE("system")
+            << this_id
+            << " synchronizer operator() not cleared ";
         }
+*/
     }
 
 private:
@@ -156,6 +177,12 @@ synchronizer<Handler> synchronize(Handler&& handler, size_t clearance_count,
     const std::string& name, synchronizer_terminate mode=
         synchronizer_terminate::on_error)
 {
+/*    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE("system")
+    << this_id
+    << " synchronize() handler = "
+    << &handler;
+*/
     return synchronizer<Handler>(std::forward<Handler>(handler),
         clearance_count, name, mode);
 }

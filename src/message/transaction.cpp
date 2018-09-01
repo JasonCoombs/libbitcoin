@@ -67,7 +67,7 @@ transaction::transaction(transaction&& other)
 {
 }
 
-transaction::transaction(const transaction& other)
+transaction::transaction(transaction& other)
   : chain::transaction(other)
 {
 }
@@ -77,7 +77,7 @@ transaction::transaction(chain::transaction&& other)
 {
 }
 
-transaction::transaction(const chain::transaction& other)
+transaction::transaction(chain::transaction& other)
   : chain::transaction(other)
 {
 }
@@ -90,7 +90,7 @@ transaction::transaction(uint32_t version, uint32_t locktime,
 }
 
 transaction::transaction(uint32_t version, uint32_t locktime,
-    const chain::input::list& inputs, const chain::output::list& outputs)
+    chain::input::list& inputs, chain::output::list& outputs)
   : chain::transaction(version, locktime, inputs, outputs)
 {
 }
@@ -136,29 +136,29 @@ size_t transaction::serialized_size(uint32_t) const
     return chain::transaction::serialized_size(true, true);
 }
 
-transaction& transaction::operator=(chain::transaction&& other)
-{
-    reset();
-    chain::transaction::operator=(std::move(other));
-    return *this;
-}
-
 transaction& transaction::operator=(transaction&& other)
 {
-    chain::transaction::operator=(std::move(other));
+    reset();
+//    chain::transaction::operator=(std::move(other));
     return *this;
 }
 
+transaction& transaction::operator=(transaction& other)
+{
+    //    chain::transaction::operator=(std::move(other));
+    return *this;
+}
+/*
 bool transaction::operator==(const chain::transaction& other) const
 {
     return chain::transaction::operator==(other);
 }
 
-bool transaction::operator!=(const chain::transaction& other) const
+bool transaction::operator!=(chain::transaction& other) const
 {
     return chain::transaction::operator!=(other);
 }
-
+*/
 bool transaction::operator==(const transaction& other) const
 {
     return chain::transaction::operator==(other);

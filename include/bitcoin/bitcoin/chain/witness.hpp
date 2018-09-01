@@ -120,7 +120,7 @@ public:
     // Validation.
     //-------------------------------------------------------------------------
 
-    code verify(const transaction& tx, uint32_t input_index, uint32_t forks,
+    code verify(transaction& tx, uint32_t input_index, uint32_t forks,
         const script& program_script, uint64_t value) const;
 
 protected:

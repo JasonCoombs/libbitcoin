@@ -34,16 +34,16 @@ class BC_API prefilled_transaction
 {
 public:
     typedef std::vector<prefilled_transaction> list;
-    typedef std::shared_ptr<const prefilled_transaction> const_ptr;
+    typedef std::shared_ptr<prefilled_transaction> const_ptr;
 
     static prefilled_transaction factory(uint32_t version, const data_chunk& data);
     static prefilled_transaction factory(uint32_t version, std::istream& stream);
     static prefilled_transaction factory(uint32_t version, reader& source);
 
     prefilled_transaction();
-    prefilled_transaction(uint64_t index, const chain::transaction& tx);
+    prefilled_transaction(uint64_t index, chain::transaction& tx);
     prefilled_transaction(uint64_t index, chain::transaction&& tx);
-    prefilled_transaction(const prefilled_transaction& other);
+    prefilled_transaction(prefilled_transaction& other);
     prefilled_transaction(prefilled_transaction&& other);
 
     uint64_t index() const;
@@ -51,7 +51,7 @@ public:
 
     chain::transaction& transaction();
     const chain::transaction& transaction() const;
-    void set_transaction(const chain::transaction& tx);
+    void set_transaction(chain::transaction& tx);
     void set_transaction(chain::transaction&& tx);
 
     bool from_data(uint32_t version, const data_chunk& data);
@@ -65,7 +65,7 @@ public:
     size_t serialized_size(uint32_t version) const;
 
     prefilled_transaction& operator=(prefilled_transaction&& other);
-    prefilled_transaction& operator=(const prefilled_transaction& other);
+    prefilled_transaction& operator=(prefilled_transaction& other);
 
     bool operator==(const prefilled_transaction& other) const;
     bool operator!=(const prefilled_transaction& other) const;

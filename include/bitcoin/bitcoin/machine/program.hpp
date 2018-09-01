@@ -56,11 +56,11 @@ public:
     program(const chain::script& script);
 
     /// Create an instance with empty stacks, value unused/max (input run).
-    program(const chain::script& script, const chain::transaction& transaction,
+    program(const chain::script& script, chain::transaction& transaction,
         uint32_t input_index, uint32_t forks);
 
     /// Create an instance with initialized stack (witness run, v0 by default).
-    program(const chain::script& script, const chain::transaction& transaction,
+    program(const chain::script& script, chain::transaction& transaction,
         uint32_t input_index, uint32_t forks, data_stack&& stack,
         uint64_t value, script_version version=script_version::zero);
 
@@ -76,7 +76,7 @@ public:
     uint32_t input_index() const;
     uint64_t value() const;
     script_version version() const;
-    const chain::transaction& transaction() const;
+    chain::transaction& transaction() const;
 
     /// Program registers.
     op_iterator begin() const;
@@ -150,7 +150,7 @@ private:
     bool stack_to_bool(bool clean) const;
 
     const chain::script& script_;
-    const chain::transaction& transaction_;
+    chain::transaction& transaction_;
     const uint32_t input_index_;
     const uint32_t forks_;
     const uint64_t value_;

@@ -48,26 +48,26 @@ public:
     input();
 
     input(input&& other);
-    input(const input& other);
+    input(input& other);
 
     input(output_point&& previous_output, chain::script&& script,
         uint32_t sequence);
-    input(const output_point& previous_output, const chain::script& script,
+    input(output_point& previous_output, const chain::script& script,
         uint32_t sequence);
 
     input(output_point&& previous_output, chain::script&& script,
         chain::witness&& witness, uint32_t sequence);
-    input(const output_point& previous_output, const chain::script& script,
+    input(output_point& previous_output, const chain::script& script,
         const chain::witness& witness, uint32_t sequence);
 
     // Operators.
     //-------------------------------------------------------------------------
 
     input& operator=(input&& other);
-    input& operator=(const input& other);
+    input& operator=(input& other);
 
     bool operator==(const input& other) const;
-    bool operator!=(const input& other) const;
+    bool operator!=(input& other) const;
 
     // Deserialization.
     //-------------------------------------------------------------------------
@@ -96,7 +96,7 @@ public:
     size_t serialized_size(bool wire=true, bool witness=false) const;
 
     output_point& previous_output();
-    const output_point& previous_output() const;
+    output_point& previous_output() const;
     void set_previous_output(const output_point& value);
     void set_previous_output(output_point&& value);
 
