@@ -40,12 +40,12 @@ output_point::output_point(point&& value)
 {
 }
 
-output_point::output_point(const point& value)
+output_point::output_point(point& value)
   : point(value), metadata{}
 {
 }
 
-output_point::output_point(const output_point& other)
+output_point::output_point(output_point& other)
   : point(other), metadata(other.metadata)
 {
 }
@@ -75,7 +75,7 @@ output_point& output_point::operator=(point&& other)
     return *this;
 }
 
-output_point& output_point::operator=(const point& other)
+output_point& output_point::operator=(point& other)
 {
     reset();
     point::operator=(other);
@@ -89,7 +89,7 @@ output_point& output_point::operator=(output_point&& other)
     return *this;
 }
 
-output_point& output_point::operator=(const output_point& other)
+output_point& output_point::operator=(output_point& other)
 {
     point::operator=(other);
     metadata = other.metadata;

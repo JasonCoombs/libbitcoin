@@ -51,13 +51,13 @@ public:
      * Initialization constructor.
      * @param[in]  value  The value to initialize with.
      */
-    point(const chain::output_point& value);
+    point(chain::output_point& value);
 
     /**
      * Copy constructor.
      * @param[in]  other  The object to copy into self on construct.
      */
-    point(const point& other);
+    point(point& other);
 
     /**
      * Overload cast to internal type.

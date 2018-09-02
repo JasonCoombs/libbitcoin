@@ -59,7 +59,7 @@ public:
 
     /// This class is move assignable and copy assignable.
     point& operator=(point&& other);
-    point& operator=(const point& other);
+    point& operator=(point& other);
 
     bool operator<(const point& other) const;
     bool operator==(const point& other) const;

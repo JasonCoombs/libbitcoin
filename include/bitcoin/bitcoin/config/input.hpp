@@ -86,7 +86,7 @@ public:
      * @return                The output stream reference.
      */
     friend std::ostream& operator<<(std::ostream& output,
-        const input& argument);
+        input& argument);
 
 private:
 

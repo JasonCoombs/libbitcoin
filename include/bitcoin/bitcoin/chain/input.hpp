@@ -96,8 +96,8 @@ public:
     size_t serialized_size(bool wire=true, bool witness=false) const;
 
     output_point& previous_output();
-    output_point& previous_output() const;
-    void set_previous_output(const output_point& value);
+    const output_point& previous_output() const;
+    void set_previous_output(output_point& value);
     void set_previous_output(output_point&& value);
 
     const chain::script& script() const;

@@ -68,10 +68,10 @@ public:
     output_point();
 
     output_point(point&& other);
-    output_point(const point& value);
+    output_point(point& value);
 
     output_point(output_point&& other);
-    output_point(const output_point& other);
+    output_point(output_point& other);
 
     output_point(hash_digest&& hash, uint32_t index);
     output_point(const hash_digest& hash, uint32_t index);
@@ -81,9 +81,9 @@ public:
     // This class is move assignable and copy assignable.
 
     output_point& operator=(point&& other);
-    output_point& operator=(const point&);
+    output_point& operator=(point&);
     output_point& operator=(output_point&& other);
-    output_point& operator=(const output_point&);
+    output_point& operator=(output_point&);
 
     bool operator==(const point& other) const;
     bool operator!=(const point& other) const;

@@ -88,7 +88,7 @@ point& point::operator=(point&& other)
     return *this;
 }
 
-point& point::operator=(const point& other)
+point& point::operator=(point& other)
 {
     hash_ = other.hash_;
     index_ = other.index_;

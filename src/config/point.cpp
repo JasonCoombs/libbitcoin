@@ -70,12 +70,12 @@ point::point(const std::string& tuple)
     std::stringstream(tuple) >> *this;
 }
 
-point::point(const chain::output_point& value)
+point::point(chain::output_point& value)
   : value_(value)
 {
 }
 
-point::point(const point& other)
+point::point( point& other)
   : point(other.value_)
 {
 }
