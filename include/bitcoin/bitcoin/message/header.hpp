@@ -39,10 +39,10 @@ public:
     typedef std::vector<header> list;
     typedef std::shared_ptr<header> ptr;
     typedef std::vector<ptr> ptr_list;
-    typedef std::shared_ptr<const header> const_ptr;
+    typedef std::shared_ptr<header> const_ptr;
     typedef std::vector<const_ptr> const_ptr_list;
     typedef std::shared_ptr<const_ptr_list> const_ptr_list_ptr;
-    typedef std::shared_ptr<const const_ptr_list> const_ptr_list_const_ptr;
+    typedef std::shared_ptr<const_ptr_list> const_ptr_list_const_ptr;
 
     static header factory(uint32_t version, const data_chunk& data);
     static header factory(uint32_t version, std::istream& stream);
@@ -56,9 +56,9 @@ public:
     header(uint32_t version, hash_digest&& previous_block_hash,
         hash_digest&& merkle, uint32_t timestamp, uint32_t bits,
         uint32_t nonce);
-    header(const chain::header& other);
+    header( chain::header& other);
     header(chain::header&& other);
-    header(const header& other);
+    header( header& other);
     header(header&& other);
 
     bool from_data(uint32_t version, const data_chunk& data);
@@ -76,8 +76,8 @@ public:
     header& operator=(header&& other);
     header& operator=(const header&) /*= delete*/;
 
-    bool operator==(const chain::header& other) const;
-    bool operator!=(const chain::header& other) const;
+//    bool operator==(const chain::header& other) const;
+//    bool operator!=(const chain::header& other) const;
 
     bool operator==(const header& other) const;
     bool operator!=(const header& other) const;

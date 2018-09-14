@@ -33,7 +33,7 @@ class BC_API block_transactions
 {
 public:
     typedef std::shared_ptr<block_transactions> ptr;
-    typedef std::shared_ptr<const block_transactions> const_ptr;
+    typedef std::shared_ptr<block_transactions> const_ptr;
 
     static block_transactions factory(uint32_t version, const data_chunk& data);
     static block_transactions factory(uint32_t version, std::istream& stream);
@@ -69,7 +69,7 @@ public:
 
     // This class is move assignable but not copy assignable.
     block_transactions& operator=(block_transactions&& other);
-    void operator=(const block_transactions&) = delete;
+    void operator=( block_transactions&) = delete;
 
     bool operator==(const block_transactions& other) const;
     bool operator!=(const block_transactions& other) const;

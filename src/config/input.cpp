@@ -24,6 +24,7 @@
 #include <boost/program_options.hpp>
 #include <bitcoin/bitcoin/chain/input.hpp>
 #include <bitcoin/bitcoin/chain/input_point.hpp>
+#include <bitcoin/bitcoin/chain/output_point.hpp>
 #include <bitcoin/bitcoin/config/point.hpp>
 #include <bitcoin/bitcoin/utility/string.hpp>
 
@@ -40,8 +41,9 @@ static bool decode_input(chain::input& input, const std::string& tuple)
         return false;
 
     input.set_sequence(max_input_sequence);
-    input.set_previous_output(point(tokens[0] + ":" + tokens[1]));
-
+//    input.set_previous_output(point(tokens[0] + ":" + tokens[1]));
+    input.set_previous_output(chain::output_point(chain::point(config::point(tokens[0] + ":" + tokens[1]))));
+    
     if (tokens.size() == 3)
         input.set_sequence(deserialize<uint32_t>(tokens[2], true));
 
@@ -49,7 +51,7 @@ static bool decode_input(chain::input& input, const std::string& tuple)
 }
 
 // input is currently a private encoding in bx.
-static std::string encode_input(const chain::input& input)
+static std::string encode_input( chain::input& input)
 {
     std::stringstream result;
     result << point(input.previous_output()) << point::delimeter
@@ -68,17 +70,17 @@ input::input(const std::string& tuple)
     std::stringstream(tuple) >> *this;
 }
 
-input::input(const chain::input& value)
+input::input( chain::input& value)
   : value_(value)
 {
 }
 
-input::input(const input& other)
+input::input( input& other)
   : input(other.value_)
 {
 }
 
-input::input(const chain::input_point& value)
+input::input( chain::input_point& value)
   : value_({value, {}, max_input_sequence})
 {
 }
@@ -101,7 +103,7 @@ std::istream& operator>>(std::istream& stream, input& argument)
     return stream;
 }
 
-std::ostream& operator<<(std::ostream& output, const input& argument)
+std::ostream& operator<<(std::ostream& output,  input& argument)
 {
     output << encode_input(argument.value_);
     return output;

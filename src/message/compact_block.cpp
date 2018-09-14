@@ -60,7 +60,7 @@ compact_block::compact_block()
 {
 }
 
-compact_block::compact_block(const chain::header& header, uint64_t nonce,
+compact_block::compact_block( chain::header& header, uint64_t nonce,
     const short_id_list& short_ids,
     const prefilled_transaction::list& transactions)
   : header_(header),
@@ -79,7 +79,7 @@ compact_block::compact_block(chain::header&& header, uint64_t nonce,
 {
 }
 
-compact_block::compact_block(const compact_block& other)
+compact_block::compact_block( compact_block& other)
   : compact_block(other.header_, other.nonce_, other.short_ids_,
       other.transactions_)
 {
@@ -216,7 +216,7 @@ const chain::header& compact_block::header() const
     return header_;
 }
 
-void compact_block::set_header(const chain::header& value)
+void compact_block::set_header( chain::header& value)
 {
     header_ = value;
 }

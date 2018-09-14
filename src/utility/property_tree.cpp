@@ -325,7 +325,7 @@ bool property_tree(ptree& out, const std::string& json)
         read_json(json_stream, out);
         return true;
     }
-    catch (const std::exception&)
+    catch ( std::exception&)
     {
         return false;
     }

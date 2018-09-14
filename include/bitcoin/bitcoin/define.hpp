@@ -21,6 +21,10 @@
 
 #include <bitcoin/bitcoin/compat.hpp>
 
+#ifdef DEBUG_ASIO
+#define BOOST_ASIO_DISABLE_THREADS
+#endif
+
 // Create bc namespace alias.
 namespace libbitcoin {
 } // namespace libbitcoin
@@ -73,6 +77,8 @@ namespace bc = libbitcoin;
         #define BC_DEPRECATED
     #endif
 #endif
+
+#define LOG_SYSTEM "system"
 
 // Avoid namespace conflict between boost::placeholders and std::placeholders.
 #define BOOST_BIND_NO_PLACEHOLDERS

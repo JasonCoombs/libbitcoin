@@ -39,11 +39,11 @@ class BC_API transaction
 {
 public:
     typedef std::shared_ptr<transaction> ptr;
-    typedef std::shared_ptr<const transaction> const_ptr;
+    typedef std::shared_ptr<transaction> const_ptr;
     typedef std::vector<ptr> ptr_list;
     typedef std::vector<const_ptr> const_ptr_list;
     typedef std::shared_ptr<const_ptr_list> const_ptr_list_ptr;
-    typedef std::shared_ptr<const const_ptr_list> const_ptr_list_const_ptr;
+    typedef std::shared_ptr<const_ptr_list> const_ptr_list_const_ptr;
 
     static transaction factory(uint32_t version, const data_chunk& data);
     static transaction factory(uint32_t version, std::istream& stream);
@@ -54,8 +54,8 @@ public:
     transaction(transaction&& other);
     transaction(chain::transaction&& other);
 
-    transaction(const transaction& other);
-    transaction(const chain::transaction& other);
+    transaction( transaction& other);
+    transaction( chain::transaction& other);
 
     transaction(uint32_t version, uint32_t locktime,
         chain::input::list&& inputs, chain::output::list&& outputs);
@@ -74,7 +74,8 @@ public:
 
     /// This class is move assignable but not copy assignable.
     transaction& operator=(transaction&& other);
-    void operator=(const transaction&) = delete;
+    transaction& operator=(transaction& other);
+//    void operator=(const transaction&) = delete;
 
     bool operator==(const chain::transaction& other) const;
     bool operator!=(const chain::transaction& other) const;

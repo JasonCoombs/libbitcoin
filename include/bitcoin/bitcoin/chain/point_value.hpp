@@ -49,8 +49,8 @@ public:
     /// This class is move assignable and copy assignable.
     point_value& operator=(point_value other);
 
-    bool operator==(const point_value& other) const;
-    bool operator!=(const point_value& other) const;
+    bool operator==( point_value& other) ;
+    bool operator!=( point_value& other) ;
 
     // Swap implementation required to properly handle base class.
     friend void swap(point_value& left, point_value& right);

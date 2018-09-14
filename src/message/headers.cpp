@@ -67,7 +67,7 @@ headers::headers()
 }
 
 // Uses headers copy assignment.
-headers::headers(const header::list& values)
+headers::headers( header::list& values)
   : elements_(values)
 {
 }
@@ -77,12 +77,12 @@ headers::headers(header::list&& values)
 {
 }
 
-headers::headers(const std::initializer_list<header>& values)
-  : elements_(values)
-{
-}
+//headers::headers(const std::initializer_list<header>& values)
+//  : elements_(values)
+//{
+//}
 
-headers::headers(const headers& other)
+headers::headers( headers& other)
   : headers(other.elements_)
 {
 }
@@ -221,10 +221,10 @@ header::list& headers::elements()
     return elements_;
 }
 
-const header::list& headers::elements() const
-{
-    return elements_;
-}
+//const header::list& headers::elements() const
+//{
+//    return elements_;
+//}
 
 void headers::set_elements(const header::list& values)
 {

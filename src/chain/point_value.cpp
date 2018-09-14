@@ -63,13 +63,13 @@ point_value& point_value::operator=(point_value other)
     return *this;
 }
 
-bool point_value::operator==(const point_value& other) const
+bool point_value::operator==( point_value& other) 
 {
     return static_cast<point>(*this) == static_cast<point>(other) &&
         (value_ == other.value_);
 }
 
-bool point_value::operator!=(const point_value& other) const
+bool point_value::operator!=( point_value& other) 
 {
     return !(*this == other);
 }

@@ -132,23 +132,23 @@ public:
         const config::checkpoint& bip9_bit0_active_checkpoint,
         const config::checkpoint& bip9_bit1_active_checkpoint);
 
-    static uint32_t signal_version(uint32_t forks, const settings& settings);
+    static uint32_t signal_version(uint32_t forks,  settings& settings);
 
     /// Create pool state from top chain top block state.
-    chain_state(const chain_state& top, const settings& settings);
+    chain_state(const chain_state& top,  settings& settings);
 
     /// Create block state from tx pool chain state of same height.
-    chain_state(const chain_state& pool, const chain::block& block,
-        const settings& settings);
+    chain_state(const chain_state& pool,  chain::block& block,
+         settings& settings);
 
     /// Create header state from header pool chain state of parent block.
-    chain_state(const chain_state& parent, const chain::header& header,
-        const settings& settings);
+    chain_state(const chain_state& parent,  chain::header& header,
+         settings& settings);
 
     /// Checkpoints must be ordered by height with greatest at back.
     /// Forks and checkpoints must match those provided for map creation.
     chain_state(data&& values, const checkpoints& checkpoints, uint32_t forks,
-        uint32_t stale_seconds, const settings& settings);
+        uint32_t stale_seconds,  settings& settings);
 
     /// Properties.
     const hash_digest& hash() const;
@@ -188,10 +188,10 @@ protected:
     };
 
     static activations activation(const data& values, uint32_t forks,
-        const settings& settings);
+         settings& settings);
     static uint32_t median_time_past(const data& values, uint32_t forks);
     static uint32_t work_required(const data& values, uint32_t forks,
-        const settings& settings);
+         settings& settings);
 
 private:
     static size_t bits_count(size_t height, uint32_t forks,
@@ -206,12 +206,12 @@ private:
     static size_t bip9_bit1_height(size_t height,
         const config::checkpoint& bip9_bit1_active_checkpoint);
 
-    static data to_pool(const chain_state& top, const settings& settings);
-    static data to_block(const chain_state& pool, const block& block,
+    static data to_pool(const chain_state& top,  settings& settings);
+    static data to_block(const chain_state& pool,  block& block,
         const config::checkpoint& bip9_bit0_active_checkpoint,
         const config::checkpoint& bip9_bit1_active_checkpoint);
-    data to_header(const chain_state& parent, const header& header,
-        const settings& settings);
+    data to_header(const chain_state& parent,  header& header,
+         settings& settings);
 
     static uint32_t work_required_retarget(const data& values,
         uint32_t proof_of_work_limit, uint32_t minimum_timespan,

@@ -276,7 +276,7 @@ const output_point& input::previous_output() const
     return previous_output_;
 }
 
-void input::set_previous_output(const output_point& value)
+void input::set_previous_output( output_point& value)
 {
     previous_output_ = value;
 }
@@ -410,7 +410,7 @@ bool input::is_locked(size_t block_height, uint32_t median_time_past) const
 
     // bip68: a minimum block-height constraint over the input's age.
     const auto minimum = (sequence_ & relative_locktime_mask);
-    const auto& prevout = previous_output_.metadata;
+     auto& prevout = previous_output_.metadata;
 
     if ((sequence_ & relative_locktime_time_locked) != 0)
     {
@@ -430,7 +430,7 @@ bool input::is_locked(size_t block_height, uint32_t median_time_past) const
 size_t input::signature_operations(bool bip16, bool bip141) const
 {
     chain::script witness, embedded;
-    const auto& prevout = previous_output_.metadata.cache.script();
+     auto& prevout = previous_output_.metadata.cache.script();
     ////BITCOIN_ASSERT_MSG(!bip141 || bip16, "bip141 implies bip16");
 
     // Penalize quadratic signature operations (bip141).
@@ -467,7 +467,7 @@ bool input::extract_embedded_script(chain::script& out) const
 {
     ////BITCOIN_ASSERT(previous_output_.is_valid());
     const auto& ops = script_.operations();
-    const auto& prevout_script = previous_output_.metadata.cache.script();
+     auto& prevout_script = previous_output_.metadata.cache.script();
 
     // There are no embedded sigops when the prevout script is not p2sh.
     if (!prevout_script.is_pay_to_script_hash(rule_fork::bip16_rule))

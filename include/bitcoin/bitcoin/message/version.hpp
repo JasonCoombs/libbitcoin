@@ -37,7 +37,7 @@ class BC_API version
 {
 public:
     typedef std::shared_ptr<version> ptr;
-    typedef std::shared_ptr<const version> const_ptr;
+    typedef std::shared_ptr<version> const_ptr;
 
     enum level: uint32_t
     {

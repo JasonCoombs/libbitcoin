@@ -39,7 +39,7 @@ class BC_API inventory
 {
 public:
     typedef std::shared_ptr<inventory> ptr;
-    typedef std::shared_ptr<const inventory> const_ptr;
+    typedef std::shared_ptr<inventory> const_ptr;
     typedef inventory_vector::type_id type_id;
 
     static inventory factory(uint32_t version, const data_chunk& data);

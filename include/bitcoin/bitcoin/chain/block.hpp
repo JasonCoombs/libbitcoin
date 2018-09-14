@@ -98,7 +98,7 @@ public:
     bool from_data(std::istream& stream, bool witness=false);
     bool from_data(reader& source, bool witness=false);
 
-    bool is_valid() const;
+    bool is_valid() ;
 
     // Serialization.
     //-------------------------------------------------------------------------
@@ -113,15 +113,15 @@ public:
 
     size_t serialized_size(bool witness=false) const;
 
-    const chain::header& header() const;
-    void set_header(const chain::header& value);
+    chain::header& header();
+    void set_header(chain::header& value);
     void set_header(chain::header&& value);
 
-    const transaction::list& transactions() const;
-    void set_transactions(const transaction::list& value);
+     transaction::list& transactions() ;
+    void set_transactions(transaction::list& value);
     void set_transactions(transaction::list&& value);
 
-    hash_digest hash() const;
+    hash_digest hash() ;
 
     // Utilities.
     //-------------------------------------------------------------------------
@@ -138,40 +138,40 @@ public:
     static uint64_t subsidy(size_t height, uint64_t subsidy_interval,
         uint64_t initial_block_subsidy_satoshi);
 
-    uint64_t fees() const;
-    uint64_t claim() const;
+    uint64_t fees() ;
+    uint64_t claim() ;
     uint64_t reward(size_t height, uint64_t subsidy_interval,
-        uint64_t initial_block_subsidy_satoshi) const;
-    hash_digest generate_merkle_root(bool witness=false) const;
-    size_t signature_operations() const;
-    size_t signature_operations(bool bip16, bool bip141) const;
-    size_t total_non_coinbase_inputs() const;
-    size_t total_inputs() const;
-    size_t weight() const;
+        uint64_t initial_block_subsidy_satoshi) ;
+    hash_digest generate_merkle_root(bool witness=false) ;
+    size_t signature_operations() ;
+    size_t signature_operations(bool bip16, bool bip141) ;
+    size_t total_non_coinbase_inputs() ;
+    size_t total_inputs() ;
+    size_t weight() ;
 
-    bool is_extra_coinbases() const;
-    bool is_final(size_t height, uint32_t block_time) const;
-    bool is_distinct_transaction_set() const;
+    bool is_extra_coinbases() ;
+    bool is_final(size_t height, uint32_t block_time) ;
+    bool is_distinct_transaction_set() ;
     bool is_valid_coinbase_claim(size_t height, uint64_t subsidy_interval,
-        uint64_t initial_block_subsidy_satoshi) const;
-    bool is_valid_coinbase_script(size_t height) const;
-    bool is_valid_witness_commitment() const;
-    bool is_forward_reference() const;
-    bool is_internal_double_spend() const;
-    bool is_valid_merkle_root() const;
-    bool is_segregated() const;
+                                 uint64_t initial_block_subsidy_satoshi) ;
+    bool is_valid_coinbase_script(size_t height) ;
+    bool is_valid_witness_commitment() ;
+    bool is_forward_reference() ;
+    bool is_internal_double_spend() ;
+    bool is_valid_merkle_root() ;
+    bool is_segregated() ;
 
     code check(uint64_t max_money, uint32_t timestamp_limit_seconds,
-        uint32_t proof_of_work_limit) const;
-    code check_transactions(uint64_t max_money) const;
-    code accept(const settings& settings, bool transactions=true,
-        bool header=true) const;
-    code accept(const chain_state& state, const settings& settings,
-        bool transactions=true, bool header=true) const;
-    code accept_transactions(const chain_state& state) const;
-    code connect() const;
-    code connect(const chain_state& state) const;
-    code connect_transactions(const chain_state& state) const;
+               uint32_t proof_of_work_limit) ;
+    code check_transactions(uint64_t max_money) ;
+    code accept( settings& settings, bool transactions=true,
+                      bool header=true) ;
+    code accept(const chain_state& state,  settings& settings,
+    bool transactions=true, bool header=true) ;
+    code accept_transactions(const chain_state& state) ;
+    code connect() ;
+    code connect(const chain_state& state) ;
+    code connect_transactions(const chain_state& state) ;
 
     // THIS IS FOR LIBRARY USE ONLY, DO NOT CREATE A DEPENDENCY ON IT.
     mutable validation metadata;

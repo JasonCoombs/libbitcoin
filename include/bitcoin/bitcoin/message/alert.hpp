@@ -34,7 +34,7 @@ class BC_API alert
 {
 public:
     typedef std::shared_ptr<alert> ptr;
-    typedef std::shared_ptr<const alert> const_ptr;
+    typedef std::shared_ptr<alert> const_ptr;
 
     static alert factory(uint32_t version, const data_chunk& data);
     static alert factory(uint32_t version, std::istream& stream);

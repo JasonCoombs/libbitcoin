@@ -78,7 +78,7 @@ inline uint32_t bits_high(const chain_state::data& values)
 //-----------------------------------------------------------------------------
 
 chain_state::activations chain_state::activation(const data& values,
-    uint32_t forks, const bc::settings& settings)
+    uint32_t forks,  bc::settings& settings)
 {
     const auto height = values.height;
     const auto version = values.version.self;
@@ -92,28 +92,28 @@ chain_state::activations chain_state::activation(const data& values,
     // CONSENSUS: Though unspecified in bip34, the satoshi implementation
     // performed this comparison using the signed integer version value.
     //*************************************************************************
-    const auto ge = [](uint32_t value, uint32_t version)
+     auto ge = [](uint32_t value, uint32_t version)
     {
         return static_cast<int32_t>(value) >= static_cast<int32_t>(version);
     };
 
     // Declare bip34-based version predicates.
-    const auto ge_2 = [=](uint32_t value) { return ge(value,
+     auto ge_2 = [=](uint32_t value) { return ge(value,
         settings.bip34_version); };
-    const auto ge_3 = [=](uint32_t value) { return ge(value,
+     auto ge_3 = [=](uint32_t value) { return ge(value,
         settings.bip66_version); };
-    const auto ge_4 = [=](uint32_t value) { return ge(value,
+     auto ge_4 = [=](uint32_t value) { return ge(value,
         settings.bip65_version); };
 
     // Compute bip34-based activation version summaries.
-    const auto count_2 = std::count_if(history.begin(), history.end(), ge_2);
-    const auto count_3 = std::count_if(history.begin(), history.end(), ge_3);
-    const auto count_4 = std::count_if(history.begin(), history.end(), ge_4);
+     auto count_2 = std::count_if(history.begin(), history.end(), ge_2);
+     auto count_3 = std::count_if(history.begin(), history.end(), ge_3);
+     auto count_4 = std::count_if(history.begin(), history.end(), ge_4);
 
     // Frozen activations (require version and enforce above freeze height).
-    const auto bip34_ice = frozen && height >= settings.bip34_freeze;
-    const auto bip66_ice = frozen && height >= settings.bip66_freeze;
-    const auto bip65_ice = frozen && height >= settings.bip65_freeze;
+     auto bip34_ice = frozen && height >= settings.bip34_freeze;
+     auto bip66_ice = frozen && height >= settings.bip66_freeze;
+     auto bip65_ice = frozen && height >= settings.bip65_freeze;
 
     // Initialize activation results with genesis values.
     activations result{ rule_fork::no_rules, settings.first_version };
@@ -285,7 +285,7 @@ uint32_t chain_state::median_time_past(const data& values, uint32_t)
 //-----------------------------------------------------------------------------
 
 uint32_t chain_state::work_required(const data& values, uint32_t forks,
-    const bc::settings& settings)
+     bc::settings& settings)
 {
     // Invalid parameter via public interface, test is_valid for results.
     if (values.height == 0)
@@ -454,7 +454,7 @@ chain_state::map chain_state::get_map(size_t height,
 
 // static
 uint32_t chain_state::signal_version(uint32_t forks,
-    const bc::settings& settings)
+     bc::settings& settings)
 {
     if (script::is_enabled(forks, rule_fork::bip65_rule))
         return settings.bip65_version;
@@ -480,7 +480,7 @@ uint32_t chain_state::signal_version(uint32_t forks,
 
 // This is promotion from a preceding height to the next.
 chain_state::data chain_state::to_pool(const chain_state& top,
-    const bc::settings& settings)
+     bc::settings& settings)
 {
     // Alias configured forks.
     const auto forks = top.forks_;
@@ -535,7 +535,7 @@ chain_state::data chain_state::to_pool(const chain_state& top,
 
 // Constructor (top to pool).
 // This generates a state for the pool above the presumed top block state.
-chain_state::chain_state(const chain_state& top, const bc::settings& settings)
+chain_state::chain_state(const chain_state& top,  bc::settings& settings)
   : data_(to_pool(top, settings)),
     forks_(top.forks_),
     stale_seconds_(top.stale_seconds_),
@@ -547,7 +547,7 @@ chain_state::chain_state(const chain_state& top, const bc::settings& settings)
 }
 
 chain_state::data chain_state::to_block(const chain_state& pool,
-    const block& block, const config::checkpoint& bip9_bit0_active_checkpoint,
+     block& block, const config::checkpoint& bip9_bit0_active_checkpoint,
     const config::checkpoint& bip9_bit1_active_checkpoint)
 {
     // Copy data from presumed same-height pool state.
@@ -555,7 +555,7 @@ chain_state::data chain_state::to_block(const chain_state& pool,
 
     // Replace pool chain state with block state at same (next) height.
     // Preserve data.timestamp.retarget promotion.
-    const auto& header = block.header();
+     auto& header = block.header();
     data.hash = header.hash();
     data.bits.self = header.bits();
     data.version.self = header.version();
@@ -574,8 +574,8 @@ chain_state::data chain_state::to_block(const chain_state& pool,
 
 // Constructor (tx pool to block).
 // This assumes that the pool state is the same height as the block.
-chain_state::chain_state(const chain_state& pool, const block& block,
-    const bc::settings& settings)
+chain_state::chain_state(const chain_state& pool,  block& block,
+     bc::settings& settings)
   : data_(to_block(pool, block, settings.bip9_bit0_active_checkpoint,
         settings.bip9_bit1_active_checkpoint)),
     forks_(pool.forks_),
@@ -588,7 +588,7 @@ chain_state::chain_state(const chain_state& pool, const block& block,
 }
 
 chain_state::data chain_state::to_header(const chain_state& parent,
-    const header& header, const bc::settings& settings)
+     header& header,  bc::settings& settings)
 {
     BITCOIN_ASSERT(header.previous_block_hash() == parent.hash());
 
@@ -615,8 +615,8 @@ chain_state::data chain_state::to_header(const chain_state& parent,
 
 // Constructor (parent to header).
 // This assumes that parent is the state of the header's previous block.
-chain_state::chain_state(const chain_state& parent, const header& header,
-    const bc::settings& settings)
+chain_state::chain_state(const chain_state& parent,  header& header,
+     bc::settings& settings)
   : data_(to_header(parent, header, settings)),
     forks_(parent.forks_),
     stale_seconds_(parent.stale_seconds_),
@@ -629,7 +629,7 @@ chain_state::chain_state(const chain_state& parent, const header& header,
 
 // Constructor (from raw data).
 chain_state::chain_state(data&& values, const checkpoints& checkpoints,
-    uint32_t forks, uint32_t stale_seconds, const bc::settings& settings)
+    uint32_t forks, uint32_t stale_seconds,  bc::settings& settings)
   : data_(std::move(values)),
     forks_(forks),
     stale_seconds_(stale_seconds),

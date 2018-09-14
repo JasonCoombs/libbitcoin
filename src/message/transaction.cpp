@@ -67,7 +67,7 @@ transaction::transaction(transaction&& other)
 {
 }
 
-transaction::transaction(const transaction& other)
+transaction::transaction( transaction& other)
   : chain::transaction(other)
 {
 }
@@ -77,7 +77,7 @@ transaction::transaction(chain::transaction&& other)
 {
 }
 
-transaction::transaction(const chain::transaction& other)
+transaction::transaction( chain::transaction& other)
   : chain::transaction(other)
 {
 }

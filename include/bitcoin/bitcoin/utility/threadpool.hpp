@@ -110,6 +110,10 @@ private:
 
     std::shared_ptr<asio::service::work> work_;
     mutable upgrade_mutex work_mutex_;
+
+    // prevent deadlock if a developer ever wants to cause threads_ to spawn new threadpool threads_
+    mutable upgrade_mutex shutdown_mutex_;
+    bool shutdown_;
 };
 
 } // namespace libbitcoin

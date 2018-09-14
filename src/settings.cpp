@@ -216,7 +216,7 @@ settings::settings(config::settings context)
             bip66_freeze = 1251;
             bip34_freeze = 0;
             bip16_activation_time = 0x4f3af580;
-            const config::checkpoint genesis_checkpoint(
+             config::checkpoint genesis_checkpoint(
                 static_cast<chain::block>(genesis_block).hash(), 0);
 
             // Since bip90 assumes a historical bip34 activation block,

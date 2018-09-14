@@ -79,8 +79,8 @@ QRENCODE_ARCHIVE="qrencode-3.4.4.tar.bz2"
 
 # Boost archive.
 #------------------------------------------------------------------------------
-BOOST_URL="http://downloads.sourceforge.net/project/boost/boost/1.62.0/boost_1_62_0.tar.bz2"
-BOOST_ARCHIVE="boost_1_62_0.tar.bz2"
+BOOST_URL="http://downloads.sourceforge.net/project/boost/boost/1.67.0/boost_1_67_0.tar.bz2"
+BOOST_ARCHIVE="boost_1_67_0.tar.bz2"
 
 
 # Define utility functions.
@@ -782,13 +782,17 @@ build_from_travis()
 #==============================================================================
 build_all()
 {
+if [ ! -d "$BUILD_DIR/libbitcoin" ]; then
     build_from_tarball $ICU_URL $ICU_ARCHIVE gzip source $PARALLEL "$BUILD_ICU" "${ICU_OPTIONS[@]}" "$@"
     build_from_tarball $ZLIB_URL $ZLIB_ARCHIVE gzip . $PARALLEL "$BUILD_ZLIB" "${ZLIB_OPTIONS[@]}" "$@"
     build_from_tarball $PNG_URL $PNG_ARCHIVE xz . $PARALLEL "$BUILD_PNG" "${PNG_OPTIONS[@]}" "$@"
     build_from_tarball $QRENCODE_URL $QRENCODE_ARCHIVE bzip2 . $PARALLEL "$BUILD_QRENCODE" "${QRENCODE_OPTIONS[@]}" "$@"
     build_from_tarball_boost $BOOST_URL $BOOST_ARCHIVE bzip2 . $PARALLEL "$BUILD_BOOST" "${BOOST_OPTIONS[@]}"
     build_from_github libbitcoin secp256k1 version5 $PARALLEL ${SECP256K1_OPTIONS[@]} "$@"
-    build_from_travis libbitcoin libbitcoin master $PARALLEL ${BITCOIN_OPTIONS[@]} "$@"
+    build_from_travis JasonCoombs libbitcoin master $PARALLEL ${BITCOIN_OPTIONS[@]} "$@"
+else
+    build_from_local "local re-build" $PARALLEL ${BITCOIN_OPTIONS[@]} "$@"
+fi
 }
 
 
@@ -798,9 +802,11 @@ if [[ $DISPLAY_HELP ]]; then
     display_help
 else
     display_configuration
+if [ ! -d "$BUILD_DIR" ]; then
     create_directory "$BUILD_DIR"
     push_directory "$BUILD_DIR"
     initialize_git
     pop_directory
+fi
     time build_all "${CONFIGURE_OPTIONS[@]}"
 fi

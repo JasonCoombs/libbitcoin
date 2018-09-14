@@ -89,7 +89,7 @@ byte_array<End - Start> slice(const std::array<uint8_t, Size>& bytes)
 
 template <size_t Left, size_t Right>
 byte_array<Left + Right> splice(const std::array<uint8_t, Left>& left,
-    const std::array<uint8_t, Right>& right)
+     std::array<uint8_t, Right>& right)
 {
     byte_array<Left + Right> out;
     /* safe to ignore */ build_array<Left + Right>(out, { left, right });
@@ -98,8 +98,8 @@ byte_array<Left + Right> splice(const std::array<uint8_t, Left>& left,
 
 template <size_t Left, size_t Middle, size_t Right>
 byte_array<Left + Middle + Right> splice(const std::array<uint8_t, Left>& left,
-    const std::array<uint8_t, Middle>& middle,
-    const std::array<uint8_t, Right>& right)
+     std::array<uint8_t, Middle>& middle,
+     std::array<uint8_t, Right>& right)
 {
     byte_array<Left + Middle + Right> out;
     /* safe to ignore */ build_array(out, { left, middle, right });

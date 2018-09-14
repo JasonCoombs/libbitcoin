@@ -39,11 +39,11 @@ class BC_API block
 {
 public:
     typedef std::shared_ptr<block> ptr;
-    typedef std::shared_ptr<const block> const_ptr;
+    typedef std::shared_ptr<block> const_ptr;
     typedef std::vector<ptr> ptr_list;
     typedef std::vector<const_ptr> const_ptr_list;
     typedef std::shared_ptr<const_ptr_list> const_ptr_list_ptr;
-    typedef std::shared_ptr<const const_ptr_list> const_ptr_list_const_ptr;
+    typedef std::shared_ptr<const_ptr_list> const_ptr_list_const_ptr;
 
     static block factory(uint32_t version, const data_chunk& data);
     static block factory(uint32_t version, std::istream& stream);
@@ -55,11 +55,11 @@ public:
     block(const block& other);
 
     block(chain::block&& other);
-    block(const chain::block& other);
+    block( chain::block& other);
 
     block(chain::header&& header, chain::transaction::list&& transactions);
-    block(const chain::header& header,
-        const chain::transaction::list& transactions);
+    block( chain::header& header,
+         chain::transaction::list& transactions);
 
     bool from_data(uint32_t version, const data_chunk& data);
     bool from_data(uint32_t version, std::istream& stream);
@@ -73,13 +73,13 @@ public:
 
     // This class is move assignable but not copy assignable.
     block& operator=(block&& other);
-    void operator=(const block&) = delete;
+    void operator=( block&) = delete;
 
-    bool operator==(const chain::block& other) const;
-    bool operator!=(const chain::block& other) const;
+    bool operator==( chain::block& other) const;
+    bool operator!=( chain::block& other) const;
 
-    bool operator==(const block& other) const;
-    bool operator!=(const block& other) const;
+    bool operator==( block& other) const;
+    bool operator!=( block& other) const;
 
     static const std::string command;
     static const uint32_t version_minimum;

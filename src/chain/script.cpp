@@ -519,12 +519,12 @@ static hash_digest sign_none(const transaction& tx, uint32_t input_index,
     const script& script_code, uint8_t sighash_type)
 {
     input::list ins;
-    const auto& inputs = tx.inputs();
+     auto& inputs = tx.inputs();
     const auto any = (sighash_type & sighash_algorithm::anyone_can_pay) != 0;
     ins.reserve(any ? 1 : inputs.size());
 
     BITCOIN_ASSERT(input_index < inputs.size());
-    const auto& self = inputs[input_index];
+     auto& self = inputs[input_index];
 
     if (any)
     {
@@ -534,7 +534,7 @@ static hash_digest sign_none(const transaction& tx, uint32_t input_index,
     else
     {
         // Erase all input scripts and sequences.
-        for (const auto& input: inputs)
+        for ( auto& input: inputs)
             ins.emplace_back(input.previous_output(), script{}, 0);
 
         // Replace self that is lost in the loop.
@@ -551,12 +551,12 @@ static hash_digest sign_single(const transaction& tx, uint32_t input_index,
     const script& script_code, uint8_t sighash_type)
 {
     input::list ins;
-    const auto& inputs = tx.inputs();
+     auto& inputs = tx.inputs();
     const auto any = (sighash_type & sighash_algorithm::anyone_can_pay) != 0;
     ins.reserve(any ? 1 : inputs.size());
 
     BITCOIN_ASSERT(input_index < inputs.size());
-    const auto& self = inputs[input_index];
+     auto& self = inputs[input_index];
 
     if (any)
     {
@@ -566,7 +566,7 @@ static hash_digest sign_single(const transaction& tx, uint32_t input_index,
     else
     {
         // Erase all input scripts and sequences.
-        for (const auto& input: inputs)
+        for ( auto& input: inputs)
             ins.emplace_back(input.previous_output(), script{}, 0);
 
         // Replace self that is lost in the loop.
@@ -575,7 +575,7 @@ static hash_digest sign_single(const transaction& tx, uint32_t input_index,
     }
 
     // Trim and clear outputs except that of specified input index.
-    const auto& outputs = tx.outputs();
+     auto& outputs = tx.outputs();
     output::list outs(input_index + 1);
 
     BITCOIN_ASSERT(input_index < outputs.size());
@@ -590,12 +590,12 @@ static hash_digest sign_all(const transaction& tx, uint32_t input_index,
     const script& script_code, uint8_t sighash_type)
 {
     input::list ins;
-    const auto& inputs = tx.inputs();
+     auto& inputs = tx.inputs();
     const auto any = (sighash_type & sighash_algorithm::anyone_can_pay) != 0;
     ins.reserve(any ? 1 : inputs.size());
 
     BITCOIN_ASSERT(input_index < inputs.size());
-    const auto& self = inputs[input_index];
+     auto& self = inputs[input_index];
 
     if (any)
     {
@@ -605,7 +605,7 @@ static hash_digest sign_all(const transaction& tx, uint32_t input_index,
     else
     {
         // Erase all input scripts.
-        for (const auto& input: inputs)
+        for ( auto& input: inputs)
             ins.emplace_back(input.previous_output(), script{},
                 input.sequence());
 

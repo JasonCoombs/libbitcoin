@@ -670,7 +670,7 @@ hash_digest transaction::outputs_hash() const
         //-----------------------------------------------------------------
     }
 
-    const auto hash = *outputs_hash_;
+     auto hash = *outputs_hash_;
     hash_mutex_.unlock_upgrade();
     ///////////////////////////////////////////////////////////////////////////
 
@@ -693,7 +693,7 @@ hash_digest transaction::inpoints_hash() const
         //-----------------------------------------------------------------
     }
 
-    const auto hash = *inpoints_hash_;
+     auto hash = *inpoints_hash_;
     hash_mutex_.unlock_upgrade();
     ///////////////////////////////////////////////////////////////////////////
 
@@ -716,7 +716,7 @@ hash_digest transaction::sequences_hash() const
         //-----------------------------------------------------------------
     }
 
-    const auto hash = *sequences_hash_;
+     auto hash = *sequences_hash_;
     hash_mutex_.unlock_upgrade();
     ///////////////////////////////////////////////////////////////////////////
 
@@ -767,7 +767,7 @@ bool transaction::is_null_non_coinbase() const
     if (is_coinbase())
         return false;
 
-    const auto invalid = [](const input& input)
+     auto invalid = [](const input& input)
     {
         return input.previous_output().is_null();
     };
@@ -778,7 +778,7 @@ bool transaction::is_null_non_coinbase() const
 // private
 bool transaction::all_inputs_final() const
 {
-    const auto finalized = [](const input& input)
+     auto finalized = [](const input& input)
     {
         return input.is_final();
     };
@@ -788,7 +788,7 @@ bool transaction::all_inputs_final() const
 
 bool transaction::is_final(size_t block_height, uint32_t block_time) const
 {
-    const auto max_locktime = [=]()
+     auto max_locktime = [=]()
     {
         return locktime_ < locktime_threshold ?
             safe_unsigned<uint32_t>(block_height) : block_time;
@@ -798,12 +798,12 @@ bool transaction::is_final(size_t block_height, uint32_t block_time) const
 }
 
 bool transaction::is_locked(size_t block_height,
-    uint32_t median_time_past) const
+    uint32_t median_time_past)
 {
     if (version_ < relative_locktime_min_version || is_coinbase())
         return false;
 
-    const auto locked = [block_height, median_time_past](const input& input)
+     auto locked = [block_height, median_time_past]( input& input)
     {
         return input.is_locked(block_height, median_time_past);
     };
@@ -819,7 +819,7 @@ bool transaction::is_locktime_conflict() const
 }
 
 // Returns max_uint64 in case of overflow.
-uint64_t transaction::total_input_value() const
+uint64_t transaction::total_input_value()
 {
     uint64_t value;
 
@@ -839,10 +839,10 @@ uint64_t transaction::total_input_value() const
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     ////static_assert(max_money() < max_uint64, "overflow sentinel invalid");
-    const auto sum = [](uint64_t total, const input& input)
+     auto sum = [](uint64_t total,  input& input)
     {
-        const auto& prevout = input.previous_output().metadata.cache;
-        const auto missing = !prevout.is_valid();
+         auto& prevout = input.previous_output().metadata.cache;
+         auto missing = !prevout.is_valid();
 
         // Treat missing previous outputs as zero-valued, no math on sentinel.
         return ceiling_add(total, missing ? 0 : prevout.value());
@@ -857,7 +857,7 @@ uint64_t transaction::total_input_value() const
 }
 
 // Returns max_uint64 in case of overflow.
-uint64_t transaction::total_output_value() const
+uint64_t transaction::total_output_value()
 {
     uint64_t value;
 
@@ -877,7 +877,7 @@ uint64_t transaction::total_output_value() const
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
     ////static_assert(max_money() < max_uint64, "overflow sentinel invalid");
-    const auto sum = [](uint64_t total, const output& output)
+     auto sum = [](uint64_t total, const output& output)
     {
         return ceiling_add(total, output.value());
     };
@@ -890,18 +890,18 @@ uint64_t transaction::total_output_value() const
     return value;
 }
 
-uint64_t transaction::fees() const
+uint64_t transaction::fees()
 {
     return floor_subtract(total_input_value(), total_output_value());
 }
 
-bool transaction::is_overspent() const
+bool transaction::is_overspent()
 {
     return !is_coinbase() && total_output_value() > total_input_value();
 }
 
 // Returns max_size_t in case of overflow.
-size_t transaction::signature_operations() const
+size_t transaction::signature_operations()
 {
     const auto state = metadata.state;
     const auto bip16 = state->is_enabled(rule_fork::bip16_rule);
@@ -910,15 +910,15 @@ size_t transaction::signature_operations() const
 }
 
 // Returns max_size_t in case of overflow.
-size_t transaction::signature_operations(bool bip16, bool bip141) const
+size_t transaction::signature_operations(bool bip16, bool bip141)
 {
-    const auto in = [bip16, bip141](size_t total, const input& input)
+     auto in = [bip16, bip141](size_t total,  input& input)
     {
         // This includes BIP16 p2sh additional sigops if prevout is cached.
         return ceiling_add(total, input.signature_operations(bip16, bip141));
     };
 
-    const auto out = [bip141](size_t total, const output& output)
+     auto out = [bip141](size_t total,  output& output)
     {
         return ceiling_add(total, output.signature_operations(bip141));
     };
@@ -934,11 +934,11 @@ size_t transaction::weight() const
         total_size_contribution * serialized_size(true, true);
 }
 
-bool transaction::is_missing_previous_outputs() const
+bool transaction::is_missing_previous_outputs()
 {
-    const auto missing = [](const input& input)
+     auto missing = [](const input& input)
     {
-        const auto& prevout = input.previous_output();
+         auto& prevout = input.previous_output();
         const auto coinbase = prevout.is_null();
         const auto missing = !prevout.metadata.cache.is_valid();
         return missing && !coinbase;
@@ -952,23 +952,23 @@ point::list transaction::previous_outputs() const
 {
     point::list prevouts;
     prevouts.reserve(inputs_.size());
-    const auto pointer = [&prevouts](const input& input)
+     auto pointer = [&prevouts](const input& input)
     {
         prevouts.push_back(input.previous_output());
     };
 
-    const auto& ins = inputs_;
+     auto& ins = inputs_;
     std::for_each(ins.begin(), ins.end(), pointer);
     return prevouts;
 }
 
-point::list transaction::missing_previous_outputs() const
+point::list transaction::missing_previous_outputs()
 {
     point::list prevouts;
     prevouts.reserve(inputs_.size());
-    const auto accumulator = [&prevouts](const input& input)
+     auto accumulator = [&prevouts](const input& input)
     {
-        const auto& prevout = input.previous_output();
+         auto& prevout = input.previous_output();
         const auto missing = !prevout.metadata.cache.is_valid();
 
         if (missing && !prevout.is_null())
@@ -980,12 +980,12 @@ point::list transaction::missing_previous_outputs() const
     return prevouts;
 }
 
-hash_list transaction::missing_previous_transactions() const
+hash_list transaction::missing_previous_transactions()
 {
-    const auto points = missing_previous_outputs();
+     auto points = missing_previous_outputs();
     hash_list hashes;
     hashes.reserve(points.size());
-    const auto hasher = [&hashes](const output_point& point)
+     auto hasher = [&hashes](const output_point& point)
     {
         hashes.push_back(point.hash());
     };
@@ -998,14 +998,14 @@ bool transaction::is_internal_double_spend() const
 {
     auto prevouts = previous_outputs();
     std::sort(prevouts.begin(), prevouts.end());
-    const auto distinct_end = std::unique(prevouts.begin(), prevouts.end());
-    const auto distinct = (distinct_end == prevouts.end());
+     auto distinct_end = std::unique(prevouts.begin(), prevouts.end());
+     auto distinct = (distinct_end == prevouts.end());
     return !distinct;
 }
 
-bool transaction::is_confirmed_double_spend() const
+bool transaction::is_confirmed_double_spend()
 {
-    const auto spent = [](const input& input)
+     auto spent = [](const input& input)
     {
         return input.previous_output().metadata.spent;
     };
@@ -1013,9 +1013,9 @@ bool transaction::is_confirmed_double_spend() const
     return std::any_of(inputs_.begin(), inputs_.end(), spent);
 }
 
-bool transaction::is_dusty(uint64_t minimum_output_value) const
+bool transaction::is_dusty(uint64_t minimum_output_value)
 {
-    const auto dust = [minimum_output_value](const output& output)
+     auto dust = [minimum_output_value]( output& output)
     {
         return output.is_dust(minimum_output_value);
     };
@@ -1023,9 +1023,9 @@ bool transaction::is_dusty(uint64_t minimum_output_value) const
     return std::any_of(outputs_.begin(), outputs_.end(), dust);
 }
 
-bool transaction::is_mature(size_t height) const
+bool transaction::is_mature(size_t height)
 {
-    const auto mature = [height](const input& input)
+     auto mature = [height]( input& input)
     {
         return input.previous_output().is_mature(height);
     };
@@ -1052,7 +1052,7 @@ bool transaction::is_segregated() const
     mutex_.unlock_upgrade_and_lock();
     //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
-    const auto segregated = [](const input& input)
+     auto segregated = [](const input& input)
     {
         return input.is_segregated();
     };
@@ -1067,7 +1067,7 @@ bool transaction::is_segregated() const
 
 // Coinbase transactions return success, to simplify iteration.
 code transaction::connect_input(const chain_state& state,
-    size_t input_index) const
+    size_t input_index)
 {
     if (input_index >= inputs_.size())
         return error::operation_failed;
@@ -1075,7 +1075,7 @@ code transaction::connect_input(const chain_state& state,
     if (is_coinbase())
         return error::success;
 
-    const auto& prevout = inputs_[input_index].previous_output().metadata;
+     auto& prevout = inputs_[input_index].previous_output().metadata;
 
     // Verify that the previous output cache has been populated.
     if (!prevout.cache.is_valid())
@@ -1085,14 +1085,17 @@ code transaction::connect_input(const chain_state& state,
     const auto index32 = static_cast<uint32_t>(input_index);
 
     // Verify the transaction input script against the previous output.
-    return script::verify(*this, index32, forks);
+//    return script::verify(*this, index32, forks);
+    auto othat = *this;
+    auto that = std::make_shared<transaction>(std::move(othat));
+    return script::verify(*that, index32, forks);
 }
 
 // Validation.
 //-----------------------------------------------------------------------------
 
 // These checks are self-contained; blockchain (and so version) independent.
-code transaction::check(uint64_t max_money, bool transaction_pool) const
+code transaction::check(uint64_t max_money, bool transaction_pool)
 {
     if (inputs_.empty() || outputs_.empty())
         return error::empty_transaction;
@@ -1130,14 +1133,14 @@ code transaction::check(uint64_t max_money, bool transaction_pool) const
         return error::success;
 }
 
-code transaction::accept(bool transaction_pool) const
+code transaction::accept(bool transaction_pool)
 {
     const auto state = metadata.state;
     return state ? accept(*state, transaction_pool) : error::operation_failed;
 }
 
 // These checks assume that prevout caching is completed on all tx.inputs.
-code transaction::accept(const chain_state& state, bool transaction_pool) const
+code transaction::accept(const chain_state& state, bool transaction_pool)
 {
     const auto bip16 = state.is_enabled(rule_fork::bip16_rule);
     const auto bip30 = state.is_enabled(rule_fork::bip30_rule);
@@ -1196,13 +1199,13 @@ code transaction::accept(const chain_state& state, bool transaction_pool) const
         return error::success;
 }
 
-code transaction::connect() const
+code transaction::connect()
 {
     const auto state = metadata.state;
     return state ? connect(*state) : error::operation_failed;
 }
 
-code transaction::connect(const chain_state& state) const
+code transaction::connect(const chain_state& state) 
 {
     code ec;
 

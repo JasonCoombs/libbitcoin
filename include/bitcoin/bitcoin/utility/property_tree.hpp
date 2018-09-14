@@ -24,6 +24,9 @@
 #include <vector>
 #include <boost/property_tree/ptree.hpp>
 #include <bitcoin/bitcoin/define.hpp>
+#include <bitcoin/bitcoin/config/base16.hpp>
+#include <bitcoin/bitcoin/config/hash160.hpp>
+#include <bitcoin/bitcoin/config/hash256.hpp>
 #include <bitcoin/bitcoin/chain/points_value.hpp>
 #include <bitcoin/bitcoin/config/header.hpp>
 #include <bitcoin/bitcoin/config/input.hpp>

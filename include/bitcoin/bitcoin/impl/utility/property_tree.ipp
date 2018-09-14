@@ -21,6 +21,10 @@
 
 #include <string>
 #include <bitcoin/bitcoin/define.hpp>
+#include <bitcoin/bitcoin/config/base16.hpp>
+#include <bitcoin/bitcoin/config/header.hpp>
+#include <bitcoin/bitcoin/config/hash160.hpp>
+#include <bitcoin/bitcoin/config/hash256.hpp>
 
 namespace libbitcoin {
 namespace config {

@@ -50,20 +50,20 @@ public:
      * Initialization constructor. Only the point is retained.
      * @param[in]  value  The value to initialize with.
      */
-    input(const chain::input& value);
+    input( chain::input& value);
 
     /**
      * Copy constructor.
      * @param[in]  other  The object to copy into self on construct.
      */
-    input(const input& other);
+    input( input& other);
 
     /**
      * Initialization constructor. Aspects of the input other than the point
      * are defaulted.
      * @param[in]  value  The value to initialize with.
      */
-    input(const chain::input_point& value);
+    input( chain::input_point& value);
 
     /**
      * Overload cast to internal type.
@@ -86,7 +86,7 @@ public:
      * @return                The output stream reference.
      */
     friend std::ostream& operator<<(std::ostream& output,
-        const input& argument);
+         input& argument);
 
 private:
 

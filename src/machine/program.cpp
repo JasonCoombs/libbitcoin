@@ -36,7 +36,7 @@ using namespace bc::chain;
 // Fixed tuning parameters, max_stack_size ensures no reallocation.
 static constexpr size_t stack_capactity = max_stack_size;
 static constexpr size_t condition_capactity = max_counted_ops;
-static const chain::transaction default_tx_;
+static  chain::transaction default_tx_;
 static const chain::script default_script_;
 
 void program::reserve_stacks()

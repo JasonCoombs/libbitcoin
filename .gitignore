@@ -7,9 +7,12 @@
 Makefile
 Makefile.in
 libbitcoin.pc
+.DS_Store
+INSTALL
 
 bin
 obj
+diff.*
 .*.swp
 *~
 /*.kdev4

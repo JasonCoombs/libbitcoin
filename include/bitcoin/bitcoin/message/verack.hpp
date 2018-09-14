@@ -35,7 +35,7 @@ class BC_API verack
 {
 public:
     typedef std::shared_ptr<verack> ptr;
-    typedef std::shared_ptr<const verack> const_ptr;
+    typedef std::shared_ptr<verack> const_ptr;
 
     static verack factory(uint32_t version, const data_chunk& data);
     static verack factory(uint32_t version, std::istream& stream);
