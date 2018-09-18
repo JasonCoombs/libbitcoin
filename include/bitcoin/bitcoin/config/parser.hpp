@@ -23,6 +23,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/program_options.hpp>
 #include <bitcoin/bitcoin/define.hpp>
+#include <bitcoin/bitcoin/config/configuration.hpp>
 
 namespace libbitcoin {
 
@@ -45,27 +46,11 @@ public:
     static boost::filesystem::path get_config_option(variables_map& variables,
         const std::string& name);
 
-    /// Load command line options (named).
-    virtual options_metadata load_options() = 0;
+    bool load_configuration_variables(variables_map& variables,
+        const std::string& option_name, options_metadata *config_settings);
 
-    /// Load command line arguments (positional).
-    virtual arguments_metadata load_arguments() = 0;
-
-    /// Load environment variable settings.
-    virtual options_metadata load_environment() = 0;
-
-    /// Load configuration file settings.
-    virtual options_metadata load_settings() = 0;
-
-protected:
-    virtual void load_command_variables(variables_map& variables,
-        int argc, const char* argv[]);
-
-    virtual bool load_configuration_variables(variables_map& variables,
-        const std::string& option_name);
-
-    virtual void load_environment_variables(variables_map& variables,
-        const std::string& prefix);
+    void load_environment_variables(variables_map& variables,
+        const std::string& prefix, options_metadata *environment_variables);
 };
 
 } // namespace config

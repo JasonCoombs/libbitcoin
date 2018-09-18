@@ -60,6 +60,7 @@ src_libbitcoin_la_SOURCES = \
     src/config/base64.cpp \
     src/config/block.cpp \
     src/config/checkpoint.cpp \
+    src/config/configuration.cpp \
     src/config/directory.cpp \
     src/config/endpoint.cpp \
     src/config/hash160.cpp \

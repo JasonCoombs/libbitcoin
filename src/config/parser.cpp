@@ -67,28 +67,16 @@ bool parser::get_option(variables_map& variables, const std::string& name)
     return variable.as<bool>();
 }
 
-void parser::load_command_variables(variables_map& variables, int argc,
-    const char* argv[])
-{
-    const auto options = load_options();
-    const auto arguments = load_arguments();
-    auto command_parser = command_line_parser(argc, argv).options(options)
-        /*.allow_unregistered()*/.positional(arguments);
-    store(command_parser.run(), variables);
-}
-
 void parser::load_environment_variables(variables_map& variables,
-    const std::string& prefix)
+    const std::string& prefix, options_metadata *environment_variables)
 {
-    const auto& environment_variables = load_environment();
-    const auto environment = parse_environment(environment_variables, prefix);
+    const auto environment = parse_environment(*environment_variables, prefix);
     store(environment, variables);
 }
 
 bool parser::load_configuration_variables(variables_map& variables,
-    const std::string& option_name)
+    const std::string& option_name, options_metadata *config_settings)
 {
-    const auto config_settings = load_settings();
     const auto config_path = get_config_option(variables, option_name);
 
     // If the existence test errors out we pretend there's no file :/.
@@ -103,14 +91,14 @@ bool parser::load_configuration_variables(variables_map& variables,
             BOOST_THROW_EXCEPTION(reading_file(path.c_str()));
         }
 
-        const auto config = parse_config_file(file, config_settings);
+        const auto config = parse_config_file(file, *config_settings);
         store(config, variables);
         return true;
     }
 
     // Loading from an empty stream causes the defaults to populate.
     std::stringstream stream;
-    const auto config = parse_config_file(stream, config_settings);
+    const auto config = parse_config_file(stream, *config_settings);
     store(config, variables);
     return false;
 }
