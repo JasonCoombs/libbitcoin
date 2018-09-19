@@ -67,14 +67,14 @@ void resubscriber<Args...>::start()
     // Critical Section
     ///////////////////////////////////////////////////////////////////////////
     const auto this_id = boost::this_thread::get_id();
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::start() calling lock_upgrade() for subscribe_mutex_ of "
     << &subscribe_mutex_;
 
     subscribe_mutex_.lock_upgrade();
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::start() called lock_upgrade() successfully for subscribe_mutex_ of "
     << &subscribe_mutex_;
@@ -89,14 +89,14 @@ void resubscriber<Args...>::start()
         return;
     }
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::start() calling unlock_upgrade() for subscribe_mutex_ of "
     << &subscribe_mutex_;
 
     subscribe_mutex_.unlock_upgrade();
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::start() called unlock_upgrade() successfully for subscribe_mutex_ of "
     << &subscribe_mutex_;
@@ -109,14 +109,14 @@ void resubscriber<Args...>::stop()
     // Critical Section
     ///////////////////////////////////////////////////////////////////////////
     const auto this_id = boost::this_thread::get_id();
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::stop() calling lock_upgrade() for subscribe_mutex_ of "
     << &subscribe_mutex_;
 
     subscribe_mutex_.lock_upgrade();
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::stop() called lock_upgrade() successfully for subscribe_mutex_ of "
     << &subscribe_mutex_;
@@ -131,14 +131,14 @@ void resubscriber<Args...>::stop()
         return;
     }
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::stop() calling unlock_upgrade() for subscribe_mutex_ of "
     << &subscribe_mutex_;
 
     subscribe_mutex_.unlock_upgrade();
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::stop() called unlock_upgrade() successfully for subscribe_mutex_ of "
     << &subscribe_mutex_;
@@ -151,14 +151,14 @@ void resubscriber<Args...>::subscribe(handler&& notify, Args... stopped_args)
     // Critical Section
     ///////////////////////////////////////////////////////////////////////////
     const auto this_id = boost::this_thread::get_id();
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::subscribe() calling lock_upgrade() for subscribe_mutex_ of "
     << &subscribe_mutex_;
 
     subscribe_mutex_.lock_upgrade();
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::subscribe() called lock_upgrade() successfully for subscribe_mutex_ of "
     << &subscribe_mutex_;
@@ -173,14 +173,14 @@ void resubscriber<Args...>::subscribe(handler&& notify, Args... stopped_args)
         return;
     }
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::subscribe() calling unlock_upgrade() for subscribe_mutex_ of "
     << &subscribe_mutex_;
 
     subscribe_mutex_.unlock_upgrade();
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::subscribe() called unlock_upgrade() successfully for subscribe_mutex_ of "
     << &subscribe_mutex_;
@@ -210,28 +210,28 @@ void resubscriber<Args...>::do_invoke(Args... args)
     // Critical Section (prevent concurrent handler execution)
     ///////////////////////////////////////////////////////////////////////////
     const auto this_id = boost::this_thread::get_id();
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::do_invoke() instantiating unique_lock() for invoke_mutex_ of "
     << &invoke_mutex_;
 
     unique_lock lock(invoke_mutex_);
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::do_invoke() created unique_lock() successfully for invoke_mutex_ of "
     << &invoke_mutex_;
 
     // Critical Section (protect stop)
     ///////////////////////////////////////////////////////////////////////////
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::do_invoke() calling lock() for subscribe_mutex_ of "
     << &subscribe_mutex_;
 
     subscribe_mutex_.lock();
 
-    LOG_DEBUG(LOG_SYSTEM)
+    LOG_VERBOSE(LOG_SYSTEM)
     << this_id
     << " resubscriber::do_invoke() called lock() successfully for subscribe_mutex_ of "
     << &subscribe_mutex_;
@@ -252,7 +252,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
         //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         std::tuple<Args...> tuple_{args...};
 
-        LOG_DEBUG(LOG_SYSTEM)
+        LOG_VERBOSE(LOG_SYSTEM)
         << this_id
         << " resubscriber::do_invoke() calling handler(args...) for handler @ "
         << &handler;
@@ -274,7 +274,7 @@ void resubscriber<Args...>::do_invoke(Args... args)
             //+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
             subscriptions_.push_back(handler);
 
-            LOG_DEBUG(LOG_SYSTEM)
+            LOG_VERBOSE(LOG_SYSTEM)
             << this_id
             << " resubscriber::do_invoke() called push_back() for handler @ "
             << &handler;
