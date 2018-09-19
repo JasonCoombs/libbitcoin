@@ -162,16 +162,16 @@ public:
     bool is_segregated() ;
 
     code check(uint64_t max_money, uint32_t timestamp_limit_seconds,
-        uint32_t proof_of_work_limit, bool scrypt=false) const;
-    code check_transactions(uint64_t max_money) const;
-    code accept(const settings& settings, bool transactions=true,
-        bool header=true) const;
-    code accept(const chain_state& state, const settings& settings,
-        bool transactions=true, bool header=true) const;
-    code accept_transactions(const chain_state& state) const;
-    code connect() const;
-    code connect(const chain_state& state) const;
-    code connect_transactions(const chain_state& state) const;
+        uint32_t proof_of_work_limit, bool scrypt=false) ;
+    code check_transactions(uint64_t max_money) ;
+    code accept( settings& settings, bool transactions=true,
+        bool header=true) ;
+    code accept(const chain_state& state,  settings& settings,
+        bool transactions=true, bool header=true) ;
+    code accept_transactions(const chain_state& state) ;
+    code connect() ;
+    code connect(const chain_state& state) ;
+    code connect_transactions(const chain_state& state) ;
 
     // THIS IS FOR LIBRARY USE ONLY, DO NOT CREATE A DEPENDENCY ON IT.
     mutable validation metadata;

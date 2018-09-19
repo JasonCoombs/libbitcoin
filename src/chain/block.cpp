@@ -799,7 +799,7 @@ code block::connect_transactions(const chain_state& state)
 
 // These checks are self-contained; blockchain (and so version) independent.
 code block::check(uint64_t max_money, uint32_t timestamp_limit_seconds,
-    uint32_t proof_of_work_limit, bool scrypt) const
+    uint32_t proof_of_work_limit, bool scrypt) 
 {
     metadata.start_check = asio::steady_clock::now();
 
