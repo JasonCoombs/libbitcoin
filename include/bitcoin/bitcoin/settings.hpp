@@ -36,24 +36,27 @@ public:
     settings();
     settings(config::settings context);
 
+    void retargeting_factor(uint32_t value);
+    uint32_t retargeting_interval_seconds() const;
+    void retargeting_interval_seconds(uint32_t value);
+    uint32_t block_spacing_seconds() const;
+    void block_spacing_seconds(uint32_t value);
+    uint32_t minimum_timespan() const;
+    uint32_t maximum_timespan() const;
+    size_t retargeting_interval() const;
+
     // Currency unit helper methods (uint64_t).
     //--------------------------------------------------------------------------
 
-    uint64_t bitcoin_to_satoshi(uint64_t bitcoin_units=1) const;
+    uint64_t bitcoin_to_satoshi(uint64_t value=1) const;
+    void initial_block_subsidy_bitcoin(uint64_t value);
+    uint64_t initial_block_subsidy_bitcoin() const;
+    void subsidy_interval(uint64_t value);
+    uint64_t subsidy_interval() const;
+    uint64_t max_money() const;
 
-    uint32_t retargeting_factor;
-    uint32_t block_spacing_seconds;
-    uint32_t easy_spacing_seconds;
     uint32_t timestamp_limit_seconds;
-    uint32_t retargeting_interval_seconds;
     uint32_t proof_of_work_limit;
-
-    // The upper and lower bounds for the retargeting timespan.
-    uint32_t minimum_timespan;
-    uint32_t maximum_timespan;
-
-    // The target number of blocks for 2 weeks of work (2016 blocks).
-    size_t retargeting_interval;
 
     config::block genesis_block;
 
@@ -93,14 +96,25 @@ public:
     // This cannot be reactivated in a future branch due to window expiration.
     config::checkpoint bip9_bit1_active_checkpoint;
 
+private:
+    uint32_t retargeting_factor_;
+    uint32_t block_spacing_seconds_;
+    uint32_t retargeting_interval_seconds_;
+
+    // The upper and lower bounds for the retargeting timespan.
+    uint32_t minimum_timespan_;
+    uint32_t maximum_timespan_;
+
+    // The target number of blocks for 2 weeks of work (2016 blocks).
+    size_t retargeting_interval_;
+
     // Currency unit settings (uint64_t).
     //--------------------------------------------------------------------------
 
-    uint64_t satoshi_per_bitcoin;
-    uint64_t initial_block_subsidy_bitcoin;
-    uint64_t recursive_money;
-    uint64_t subsidy_interval;
-    uint64_t max_money;
+    uint64_t initial_block_subsidy_bitcoin_;
+    uint64_t recursive_money_;
+    uint64_t subsidy_interval_;
+    uint64_t max_money_;
 };
 
 } // namespace libbitcoin

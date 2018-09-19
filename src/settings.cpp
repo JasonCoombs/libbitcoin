@@ -19,19 +19,15 @@
 #include <cstdint>
 #include <bitcoin/bitcoin/settings.hpp>
 #include <bitcoin/bitcoin/chain/block.hpp>
+#include <bitcoin/bitcoin/chain/chain_state.hpp>
 
 namespace libbitcoin {
 
+using namespace chain;
+
 // Common default values (no settings context).
 settings::settings()
-  : retargeting_factor(4),
-    block_spacing_seconds(10 * 60),
-    easy_spacing_seconds(20 * 60),
-    timestamp_limit_seconds(2 * 60 * 60),
-    retargeting_interval_seconds(2 * 7 * 24 * 60 * 60),
-    minimum_timespan(retargeting_interval_seconds / retargeting_factor),
-    maximum_timespan(retargeting_interval_seconds * retargeting_factor),
-    retargeting_interval(retargeting_interval_seconds / block_spacing_seconds),
+  : timestamp_limit_seconds(2 * 60 * 60),
     first_version(1),
     bip34_version(2),
     bip66_version(3),
@@ -39,9 +35,17 @@ settings::settings()
     bip9_version_bit0(1u << 0),
     bip9_version_bit1(1u << 1),
     bip9_version_base(0x20000000),
-    satoshi_per_bitcoin(100000000),
-    initial_block_subsidy_bitcoin(50),
-    recursive_money(9999999989u)
+    retargeting_factor_(4),
+    block_spacing_seconds_(10 * 60),
+    retargeting_interval_seconds_(2 * 7 * 24 * 60 * 60),
+    minimum_timespan_(chain_state::minimum_timespan(
+        retargeting_interval_seconds_, retargeting_factor_)),
+    maximum_timespan_(chain_state::maximum_timespan(
+        retargeting_interval_seconds_, retargeting_factor_)),
+    retargeting_interval_(chain_state::retargeting_interval(
+        retargeting_interval_seconds_, block_spacing_seconds_)),
+    initial_block_subsidy_bitcoin_(50),
+    recursive_money_(9999999989u)
 {
 }
 
@@ -107,7 +111,7 @@ settings::settings(config::settings context)
                 "0000000000000000001c8018d9cb3b742ef25114f27563e3fc4a1902167f9893",
                 481824);
 
-            subsidy_interval = 210000;
+            subsidy_interval_ = 210000;
             break;
         }
 
@@ -168,7 +172,7 @@ settings::settings(config::settings context)
                 "00000000002b980fcd729daaa248fd9316a5200e9b367f4ff2c42453e84201ca",
                 834624);
 
-            subsidy_interval = 210000;
+            subsidy_interval_ = 210000;
             break;
         }
 
@@ -228,7 +232,7 @@ settings::settings(config::settings context)
             bip9_bit0_active_checkpoint = genesis_checkpoint;
             bip9_bit1_active_checkpoint = genesis_checkpoint;
 
-            subsidy_interval = 150;
+            subsidy_interval_ = 150;
             break;
         }
 
@@ -237,6 +241,76 @@ settings::settings(config::settings context)
         {
         }
     }
+    max_money_ = recursive_money_ * subsidy_interval_;
+}
+
+void settings::retargeting_factor(uint32_t value)
+{
+    retargeting_factor_ = value;
+    minimum_timespan_ = chain_state::minimum_timespan(
+        retargeting_interval_seconds_, retargeting_factor_);
+    maximum_timespan_ = chain_state::maximum_timespan(
+        retargeting_interval_seconds_, retargeting_factor_);
+}
+
+uint32_t settings::retargeting_interval_seconds() const
+{
+    return retargeting_interval_seconds_;
+}
+
+void settings::retargeting_interval_seconds(uint32_t value)
+{
+    retargeting_interval_seconds_ = value;
+    minimum_timespan_ = chain_state::minimum_timespan(
+        retargeting_interval_seconds_, retargeting_factor_);
+    maximum_timespan_ = chain_state::maximum_timespan(
+        retargeting_interval_seconds_, retargeting_factor_);
+    retargeting_interval_ = chain_state::retargeting_interval(
+        retargeting_interval_seconds_, block_spacing_seconds_);
+}
+
+uint32_t settings::block_spacing_seconds() const
+{
+    return block_spacing_seconds_;
+}
+
+void settings::block_spacing_seconds(uint32_t value)
+{
+    block_spacing_seconds_ = value;
+    retargeting_interval_ = chain_state::retargeting_interval(
+        retargeting_interval_seconds_, block_spacing_seconds_);
+}
+
+uint32_t settings::minimum_timespan() const
+{
+    return minimum_timespan_;
+}
+
+uint32_t settings::maximum_timespan() const
+{
+    return maximum_timespan_;
+}
+
+size_t settings::retargeting_interval() const
+{
+    return retargeting_interval_;
+}
+
+uint64_t settings::bitcoin_to_satoshi(uint64_t value) const
+{
+    static const uint64_t satoshi_per_bitcoin = 100000000;
+    return value * satoshi_per_bitcoin;
+}
+
+void settings::initial_block_subsidy_bitcoin(uint64_t value)
+{
+    initial_block_subsidy_bitcoin_ = value;
+    const std::function<uint64_t(uint64_t)> recursive_money =
+        [&recursive_money](uint64_t money)
+        {
+            return money > 0 ? money + recursive_money(money >> 1u) : 0;
+        };
+    recursive_money_ = recursive_money(bitcoin_to_satoshi(value));
 
     //**************************************************************************
     // CONSENSUS: This is the true maximum amount of money that can be created.
@@ -246,12 +320,28 @@ settings::settings(config::settings context)
     // value could be consensus critical unless it was *less* than the true
     // value.
     //**************************************************************************
-    max_money = recursive_money * subsidy_interval;
+    max_money_ = recursive_money_ * subsidy_interval_;
 }
 
-uint64_t settings::bitcoin_to_satoshi(uint64_t bitcoin_units) const
+uint64_t settings::initial_block_subsidy_bitcoin() const
 {
-    return bitcoin_units * satoshi_per_bitcoin;
+    return initial_block_subsidy_bitcoin_;
+}
+
+void settings::subsidy_interval(uint64_t value)
+{
+    subsidy_interval_ = value;
+    max_money_ = recursive_money_ * subsidy_interval_;
+}
+
+uint64_t settings::subsidy_interval() const
+{
+    return subsidy_interval_;
+}
+
+uint64_t settings::max_money() const
+{
+    return max_money_;
 }
 
 } // namespace libbitcoin
