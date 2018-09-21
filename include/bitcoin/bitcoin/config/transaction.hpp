@@ -52,11 +52,13 @@ public:
      */
     transaction( chain::transaction& value);
 
+    transaction(const chain::transaction& value);
+    
     /**
      * Copy constructor.
      * @param[in]  other  The object to copy into self on construct.
      */
-    transaction( transaction& other);
+    transaction(const transaction& other);
 
     /**
      * Return a reference to the data member.
@@ -77,7 +79,7 @@ public:
      * @return                The input stream reference.
      */
     friend std::istream& operator>>(std::istream& input,
-        transaction& argument);
+       const transaction& argument);
 
     /**
      * Overload stream out.
@@ -86,9 +88,9 @@ public:
      * @return                The output stream reference.
      */
     friend std::ostream& operator<<(std::ostream& output,
-         transaction& argument);
+        const transaction& argument);
 
-private:
+//private:
 
     /**
      * The state of this object's transaction data.

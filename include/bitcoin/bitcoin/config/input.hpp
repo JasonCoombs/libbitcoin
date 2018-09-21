@@ -50,20 +50,20 @@ public:
      * Initialization constructor. Only the point is retained.
      * @param[in]  value  The value to initialize with.
      */
-    input( chain::input& value);
+    input(const chain::input& value);
 
     /**
      * Copy constructor.
      * @param[in]  other  The object to copy into self on construct.
      */
-    input( input& other);
+    input(const input& other);
 
     /**
      * Initialization constructor. Aspects of the input other than the point
      * are defaulted.
      * @param[in]  value  The value to initialize with.
      */
-    input( chain::input_point& value);
+    input(const chain::input_point& value);
 
     /**
      * Overload cast to internal type.

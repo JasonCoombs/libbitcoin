@@ -70,17 +70,17 @@ input::input(const std::string& tuple)
     std::stringstream(tuple) >> *this;
 }
 
-input::input( chain::input& value)
+input::input(const chain::input& value)
   : value_(value)
 {
 }
 
-input::input( input& other)
+input::input(const input& other)
   : input(other.value_)
 {
 }
 
-input::input( chain::input_point& value)
+input::input(const chain::input_point& value)
   : value_({value, {}, max_input_sequence})
 {
 }
