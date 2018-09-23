@@ -96,7 +96,7 @@ public:
     // This cannot be reactivated in a future branch due to window expiration.
     config::checkpoint bip9_bit1_active_checkpoint;
 
-private:
+//private:
     uint32_t retargeting_factor_;
     uint32_t block_spacing_seconds_;
     uint32_t retargeting_interval_seconds_;
