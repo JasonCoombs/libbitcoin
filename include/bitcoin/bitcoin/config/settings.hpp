@@ -28,7 +28,10 @@ enum class settings
     none,
     mainnet,
     testnet,
-    regtest
+    regtest,
+    mainnet_server,
+    testnet_server,
+    regtest_server
 };
 
 } // namespace config
