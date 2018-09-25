@@ -91,7 +91,9 @@ bool parser::load_configuration_variables(variables_map& variables,
             BOOST_THROW_EXCEPTION(reading_file(path.c_str()));
         }
 
-        const auto config = parse_config_file(file, *config_settings);
+        // third parameter to parse_config_file() is allow_unregistered
+        // https://www.boost.org/doc/libs/1_68_0/doc/html/program_options/reference.html
+        const auto config = boost::program_options::parse_config_file(file, *config_settings, true);
         store(config, variables);
         return true;
     }
