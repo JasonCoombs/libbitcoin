@@ -62,7 +62,7 @@ std::string error_category_impl::message(int ev) const BC_NOEXCEPT
         { error::store_block_invalid_height, "block out of order" },
         { error::store_block_missing_parent, "block missing parent" },
         { error::store_block_duplicate, "block duplicate" },
-        { error::store_lock_failure, "lock failure" },
+        { error::store_lock_failure, "store lock failure" },
         { error::store_incorrect_state, "incorrect state" },
 
         // network

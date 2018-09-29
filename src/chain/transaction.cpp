@@ -401,7 +401,7 @@ bool transaction::is_valid() const
 data_chunk transaction::to_data(bool wire, bool witness) const
 {
     // Witness handling must be disabled for non-segregated txs.
-    witness &= is_segregated();
+    witness = witness && is_segregated();
 
     data_chunk data;
     const auto size = serialized_size(wire, witness);
@@ -420,7 +420,7 @@ data_chunk transaction::to_data(bool wire, bool witness) const
 void transaction::to_data(std::ostream& stream, bool wire, bool witness) const
 {
     // Witness handling must be disabled for non-segregated txs.
-    witness &= is_segregated();
+    witness = witness && is_segregated();
 
     ostream_writer sink(stream);
     to_data(sink, wire, witness);
@@ -432,7 +432,7 @@ void transaction::to_data(writer& sink, bool wire, bool witness) const
     if (wire)
     {
         // Witness handling must be disabled for non-segregated txs.
-        witness &= is_segregated();
+        witness = witness && is_segregated();
 
         // Wire (satoshi protocol) serialization.
         sink.write_4_bytes_little_endian(version_);
@@ -484,7 +484,7 @@ size_t transaction::maximum_size(bool is_coinbase)
 size_t transaction::serialized_size(bool wire, bool witness) const
 {
     // The witness parameter must be set to false for non-segregated txs.
-    witness &= is_segregated();
+    witness = witness && is_segregated();
 
     // Returns space for the witness although not serialized by input.
     // Returns witness space if specified even if input not segregated.
@@ -614,7 +614,7 @@ void transaction::invalidate_cache() const
 hash_digest transaction::hash(bool witness) const
 {
     // Witness hashing must be disabled for non-segregated txs.
-    witness &= is_segregated();
+    witness = witness && is_segregated();
 
     ///////////////////////////////////////////////////////////////////////////
     // Critical Section

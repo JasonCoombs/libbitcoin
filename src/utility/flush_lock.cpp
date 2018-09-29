@@ -19,6 +19,7 @@
 #include <bitcoin/bitcoin/utility/flush_lock.hpp>
 
 #include <memory>
+#include <bitcoin/bitcoin.hpp>
 #include <boost/filesystem.hpp>
 #include <bitcoin/bitcoin/unicode/file_lock.hpp>
 #include <bitcoin/bitcoin/unicode/ifstream.hpp>
@@ -58,24 +59,58 @@ bool flush_lock::try_lock()
     return !exists(file_);
 }
 
-// Lock is idempotent, returns true if locked on return.
 bool flush_lock::lock_shared()
 {
+    const auto this_id = boost::this_thread::get_id();
+
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " flush_lock::lock_shared() was called.";
+
     if (locked_)
+    {
+        LOG_VERBOSE(LOG_SYSTEM)
+        << this_id
+        << " flush_lock::lock_shared() locked_ already true.";
+
         return true;
+    }
+
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " flush_lock::lock_shared() calling create() for file: "
+    << file_;
 
     locked_ = create(file_);
+
+    if (!locked_)
+    {
+        LOG_VERBOSE(LOG_SYSTEM)
+        << this_id
+        << " error flush_lock::lock_shared() failed to create() file: "
+        << file_;
+    }
+
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " flush_lock::lock_shared() done. returning...";
+
     return locked_;
 }
 
-// Unlock is idempotent, returns true if unlocked on return.
 bool flush_lock::unlock_shared()
 {
     if (!locked_)
         return true;
 
-    locked_ = !destroy(file_);
-    return !locked_;
+    bool retval = destroy(file_);
+
+    // always set locked_ to false, even if boost::filesystem::remove() returns false
+    locked_ = false;
+
+    // a return value of false is not an error, it's useful for debugging purposes only
+    // false indicates that the flush lock file was already deleted when remove() was called
+    return retval;
 }
 
 } // namespace libbitcoin
