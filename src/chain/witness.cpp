@@ -18,6 +18,9 @@
  */
 #include <bitcoin/bitcoin/chain/witness.hpp>
 
+#include <bitcoin/bitcoin.hpp>
+#include <boost/filesystem.hpp>
+#include <iostream>
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
@@ -26,6 +29,7 @@
 #include <numeric>
 #include <string>
 #include <utility>
+#include <thread>
 #include <boost/algorithm/string.hpp>
 #include <bitcoin/bitcoin/chain/script.hpp>
 #include <bitcoin/bitcoin/error.hpp>
@@ -40,6 +44,8 @@
 #include <bitcoin/bitcoin/utility/data.hpp>
 #include <bitcoin/bitcoin/utility/istream_reader.hpp>
 #include <bitcoin/bitcoin/utility/ostream_writer.hpp>
+#include <bitcoin/bitcoin/utility/thread.hpp>
+#include <bitcoin/bitcoin/log/source.hpp>
 
 namespace libbitcoin {
 namespace chain {
@@ -416,6 +422,7 @@ bool witness::extract_sigop_script(script& out_script,
 bool witness::extract_embedded_script(script& out_script,
     data_stack& out_stack, const script& program_script) const
 {
+    const auto this_id = boost::this_thread::get_id();
     switch (program_script.version())
     {
         // The v0 program size must be either 20 or 32 bytes (bip141).
@@ -425,36 +432,103 @@ bool witness::extract_embedded_script(script& out_script,
             const auto program_size = program.size();
             out_stack = stack_;
 
-            // always: <signature> <pubkey>
+            // for tx with only segwit inputs, always: <signature> <pubkey>
+            // for tx with a mix of segwit and non-segwit inputs, see:
+            // https://bitcointalk.org/index.php?topic=2052851.0
+            // "By bip141 rules, when a segwit input and a non segwit input are redeemed in the same transaction, the non-segwit input will have an empty witness."
             if (program_size == short_hash_size)
             {
-                // Stack must be 2 elements, within push size limit (bip141).
-                if (out_stack.size() != 2 || !is_push_size(out_stack))
+                if (!is_push_size(out_stack))
+                {
+                    LOG_VERBOSE(LOG_SYSTEM)
+                    << this_id
+                    << " witness::extract_embedded_script() !is_push_size";
+                    
                     return false;
+                }
+                if (out_stack.size() == 0)
+                {
+                    // how do we verify that this is in fact a mixed-input transaction?
+                    // set flags to indicate the presence of segwit/non-segwit inputs processed
+                    // need to return false after the final input and witness are processed if these
+                    // two new flags are not both true and any zero-length witness block was found.
+                    // (probably need a third flag to indicate this condition, a zero-length found.
 
-                // The hash160 of public key must match the program (bip141).
-                out_script.from_operations(to_pay_key_hash(std::move(program)));
-                return true;
+                    LOG_VERBOSE(LOG_SYSTEM)
+                    << this_id
+                    << " witness::extract_embedded_script() out_stack.size == 0";
+
+                    return true;
+                }
+                else if (out_stack.size() != 2)
+                {
+                    LOG_VERBOSE(LOG_SYSTEM)
+                    << this_id
+                    << " witness::extract_embedded_script() out_stack.size != 2 && != 0";
+
+                    // a stack size other than 0 or 2 is an error.
+                    return false;
+                }
+                else
+                {
+                // Stack will be 2 elements within push size limit, if only segwit inputs (bip141).
+                        LOG_VERBOSE(LOG_SYSTEM)
+                        << this_id
+                        << " witness::extract_embedded_script() out_stack.size == 2";
+
+                    // The hash160 of public key must match the program (bip141).
+                    out_script.from_operations(to_pay_key_hash(std::move(program)));
+                    return true;
+                }
             }
 
             // example: 0 <signature1> <1 <pubkey1> <pubkey2> 2 CHECKMULTISIG>
             if (program_size == hash_size)
             {
-                // The witness must consist of at least 1 item (bip141).
-                if (out_stack.empty())
-                    return false;
+                // The witness normally consists of at least 1 item (bip141).
+                // can 32-byte stack be empty if tx has a mix of segwit and non-segwit inputs? see:
+                // https://bitcointalk.org/index.php?topic=2052851.0
+                // "By bip141 rules, when a segwit input and a non segwit input are redeemed in the same transaction, the non-segwit input will have an empty witness."
+                if (!out_stack.empty())
+                {
+                    LOG_VERBOSE(LOG_SYSTEM)
+                    << this_id
+                    << " witness::extract_embedded_script() out_stack.empty() == FALSE";
 
-                // The script is popped off the initial witness stack (bip141).
-                out_script.from_data(pop(out_stack), false);
+                    // The script is popped off the initial witness stack (bip141).
+                    out_script.from_data(pop(out_stack), false);
 
-                // Stack elements must be within push size limit (bip141).
-                if (!is_push_size(out_stack))
-                    return false;
+                    // Stack elements must be within push size limit (bip141).
+                    if (!is_push_size(out_stack))
+                    {
+                        LOG_VERBOSE(LOG_SYSTEM)
+                        << this_id
+                        << " witness::extract_embedded_script() !is_push_size";
+                        return false;
+                    }
 
-                // SHA256 of the witness script must match program (bip141).
-                return std::equal(program.begin(), program.end(),
-                    sha256_hash(out_script.to_data(false)).begin());
+                    // SHA256 of the witness script must match program (bip141).
+                    return std::equal(program.begin(), program.end(),
+                        sha256_hash(out_script.to_data(false)).begin());
+                }
+                else
+                {
+                    LOG_VERBOSE(LOG_SYSTEM)
+                    << this_id
+                    << " witness::extract_embedded_script() out_stack.empty() == TRUE";
+
+                    // how do we verify that this is in fact a mixed-input transaction?
+                    // set flags to indicate the presence of segwit/non-segwit inputs processed
+                    // need to return false after the final input and witness are processed if these
+                    // two new flags are not both true and any zero-length witness block was found.
+                    // (probably need a third flag to indicate this condition, a zero-length found.
+                    return true;
+                }
             }
+
+            LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " witness::extract_embedded_script() ending function with return false";
 
             return false;
         }

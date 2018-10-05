@@ -18,6 +18,8 @@
  */
 #include <bitcoin/bitcoin/chain/script.hpp>
 
+#include <bitcoin/bitcoin.hpp>
+#include <iostream>
 #include <algorithm>
 #include <cstddef>
 #include <cstdint>
@@ -50,6 +52,7 @@
 #include <bitcoin/bitcoin/utility/istream_reader.hpp>
 #include <bitcoin/bitcoin/utility/ostream_writer.hpp>
 #include <bitcoin/bitcoin/utility/string.hpp>
+#include <bitcoin/bitcoin/log/source.hpp>
 
 namespace libbitcoin {
 namespace chain {
@@ -1249,10 +1252,37 @@ script_pattern script::input_pattern() const
 
 bool script::is_pay_to_witness(uint32_t forks) const
 {
+    const auto this_id = boost::this_thread::get_id();
     // This is used internally as an optimization over using script::pattern.
     // The first operations access must be method-based to guarantee the cache.
-    return is_enabled(forks, rule_fork::bip141_rule) &&
-        is_witness_program_pattern(operations());
+    bool bien = is_enabled(forks, rule_fork::bip141_rule);
+    if (bien)
+    {
+        LOG_VERBOSE(LOG_SYSTEM)
+        << this_id
+        << " script::is_pay_to_witness bien";
+    }
+    else
+    {
+        LOG_VERBOSE(LOG_SYSTEM)
+        << this_id
+        << " script::is_pay_to_witness mal";
+    }
+    auto bops = operations();
+    bool biwi = is_witness_program_pattern(bops);
+    if (biwi)
+    {
+        LOG_VERBOSE(LOG_SYSTEM)
+        << this_id
+        << " script::is_pay_to_witness biwi";
+    }
+    else
+    {
+        LOG_VERBOSE(LOG_SYSTEM)
+        << this_id
+        << " script::is_pay_to_witness biwi is false";
+    }
+    return bien && biwi;
 }
 
 bool script::is_pay_to_script_hash(uint32_t forks) const
@@ -1381,6 +1411,11 @@ bool script::is_unspendable() const
 code script::verify(const transaction& tx, uint32_t input_index,
     uint32_t forks, const script& prevout_script, uint64_t value)
 {
+    const auto this_id = boost::this_thread::get_id();
+    LOG_VERBOSE(LOG_SYSTEM)
+    << this_id
+    << " script::verify()";
+
     if (input_index >= tx.inputs().size())
         return error::operation_failed;
 
@@ -1391,64 +1426,145 @@ code script::verify(const transaction& tx, uint32_t input_index,
     // Evaluate input script.
     program input(in.script(), tx, input_index, forks);
     if ((ec = input.evaluate()))
+    {
+           LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() called input.evaluate() and returned";
         return ec;
+    }
 
     // Evaluate output script using stack result from input script.
     program prevout(prevout_script, input);
     if ((ec = prevout.evaluate()))
+    {
+           LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() called prevout.evaluate() and returned";
         return ec;
+    }
 
     // This precludes bare witness programs of -0 (undocumented).
     if (!prevout.stack_result(false))
+    {
         return error::stack_false;
+    }
 
     // Triggered by output script push of version and witness program (bip141).
     if ((witnessed = prevout_script.is_pay_to_witness(forks)))
     {
+        LOG_VERBOSE(LOG_SYSTEM)
+        << this_id
+        << " script::verify() called is_pay_to_witness() and got nonzero return value";
+
         // The input script must be empty (bip141).
         if (!in.script().empty())
+        {
+            LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() called in.script().empty() and got zero return value";
+
             return error::dirty_witness;
+        }
 
         // This is a valid witness script so validate it.
         if ((ec = in.witness().verify(tx, input_index, forks,
             prevout_script, value)))
+        {
+            LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() called witness::verify() and got nonzero return value";
+
             return ec;
+        }
+        else
+        {
+            LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() called witness::verify() and got zero return value";
+        }
     }
 
     // p2sh and p2w are mutually exclusive.
     else if (prevout_script.is_pay_to_script_hash(forks))
     {
+        LOG_VERBOSE(LOG_SYSTEM)
+        << this_id
+        << " script::verify() is_pay_to_script_hash()";
+
         if (!is_relaxed_push(in.script().operations()))
+        {
+            LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() is_relaxed_push()";
+
             return error::invalid_script_embed;
+        }
 
         // Embedded script must be at the top of the stack (bip16).
         script embedded_script(input.pop(), false);
 
         program embedded(embedded_script, std::move(input), true);
         if ((ec = embedded.evaluate()))
-            return ec;
+        {
+            LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() embedded.evaluate()";
 
+            return ec;
+        }
+        
         // This precludes embedded witness programs of -0 (undocumented).
         if (!embedded.stack_result(false))
-            return error::stack_false;
+        {
+            LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() embedded.stack_result(false)";
 
+            return error::stack_false;
+        }
+        
         // Triggered by embedded push of version and witness program (bip141).
         if ((witnessed = embedded_script.is_pay_to_witness(forks)))
         {
+            LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() witnessed embedded_script";
+
             // The input script must be a push of the embedded_script (bip141).
             if (in.script().size() != 1)
+            {
+                LOG_VERBOSE(LOG_SYSTEM)
+                << this_id
+                << " script::verify() in.script().size() != 1";
+
                 return error::dirty_witness;
+            }
 
             // This is a valid embedded witness script so validate it.
             if ((ec = in.witness().verify(tx, input_index, forks,
                 embedded_script, value)))
+            {
+                LOG_VERBOSE(LOG_SYSTEM)
+                << this_id
+                << " script::verify() in.witness().verify()";
+
                 return ec;
+            }
         }
     }
 
     // Witness must be empty if no bip141 or valid witness program (bip141).
     if (!witnessed && !in.witness().empty())
+    {
+        LOG_VERBOSE(LOG_SYSTEM)
+        << this_id
+        << " script::verify() !witnessed && !in.witness().empty()";
+
         return error::unexpected_witness;
+    }
+           LOG_VERBOSE(LOG_SYSTEM)
+            << this_id
+            << " script::verify() finished, returning error::success";
 
     return error::success;
 }
